@@ -107,7 +107,7 @@ export default {
 	mounted () {
 		console.log('ライフサイクル:mounted');
 		liff.init({
-				liffId: '1655592859-Ke0bLndm'
+				liffId: 'LIFF IDを設定する'
 		})
 		.then(() => {
 			// start to use LIFF's api
@@ -157,7 +157,7 @@ export default {
 			taxi_reserve_body.numberOfTickets	= Number(this.selectedTicketNumber);
 			taxi_reserve_body.reservationDatetime	= date.toISOString();
 			const json_taxireserve_mess = JSON.stringify(taxi_reserve_body);
-			const url = 'https://red-stone-0dc5a2500.azurestaticapps.net/api/taxireserve'
+			const url = 'Azure Static Web Serviceのエンドポイント' + '/api/taxireserve'
 			// POST
 			axios.post(url,json_taxireserve_mess)
 			.then(response => {
@@ -191,7 +191,7 @@ export default {
 				mess_body.userIdToken = liff.getIDToken();
 				mess_body.messageText = messageText;
 				const json_mess = JSON.stringify(mess_body);
-				const url = 'https://red-stone-0dc5a2500.azurestaticapps.net/api/sendmessage';
+				const url = 'Azure Static Web Serviceのエンドポイント' + '/api/sendmessage';
 				// POST
 				axios.post(url,json_mess)
 				.then(response => {
