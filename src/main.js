@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
-import TaxiReserve from './TaxiReserve.vue'
 
-Vue.component('app-taxi-reserve', TaxiReserve)
+Vue.config.productionTip = false
+
 new Vue({
-  el: '#app',
-  render: h => h(App)
-})
+  render: h => h(App),
+}).$mount('#app')

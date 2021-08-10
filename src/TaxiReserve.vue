@@ -71,7 +71,7 @@
 import liff from '@line/liff'
 import axios from 'axios'
 export default {
-	name: 'app',
+	name: 'TaxiReserve',
 	data () {
 		return {
 			displayName: '',

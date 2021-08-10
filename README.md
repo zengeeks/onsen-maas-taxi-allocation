@@ -2,16 +2,21 @@
 
 > A Vue.js project
 
-## Build Setup
+## Project setup
 
-``` bash
-# install dependencies
+```
 npm install
+```
 
-# serve with hot reload at localhost:8080
-npm run dev
+### Compiles and hot-reloads for development
 
-# build for production with minification
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+
+```
 npm run build
 ```
 
