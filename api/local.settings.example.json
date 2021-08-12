@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "languageWorkers__node__arguments": "--inspect=9229",
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "LIFF_CHANNEL_ID": "<CHANNEL_ID_OF_LINE_LOGIN_APP>",
+    "LIFF_MSG_AUTH_TOKEN": "<AUTH_TOKEN_OF_LINE_MESSAGING_API>",
+    "DB_CONNECT_SERVER_NAME": "NAME_OF_SQL_SERVER",
+    "DB_CONNECT_USER": "<NAME_OF_SQL_SERVER_USER>",
+    "DB_CONNECT_PASS": "<PASSWORD_OF_SQL_SERVER_USER>",
+    "DB_CONNECT_DB_NAME": "<NAME_OF_SQL_DATABASE>"
+  }
+}
