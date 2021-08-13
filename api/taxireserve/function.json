@@ -1,19 +1,28 @@
 {
-    "bindings": [
-      {
-        "authLevel": "anonymous",
-        "type": "httpTrigger",
-        "direction": "in",
-        "name": "req",
-        "methods": [
-          "post"
-        ],
-        "route": "taxireserve"
-      },
-      {
-        "type": "http",
-        "direction": "out",
-        "name": "res"
-      }
-    ]
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ],
+      "route": "taxireserve"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "taxiReserveDocument",
+      "type": "cosmosDB",
+      "databaseName": "TaxiReserveDb",
+      "collectionName": "TaxiReserveCol",
+      "createIfNotExists": false,
+      "connectionStringSetting": "COSMOS_CONNECTION",
+      "direction": "out"
+    }
+  ]
 }
