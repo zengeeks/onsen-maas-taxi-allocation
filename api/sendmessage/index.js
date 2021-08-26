@@ -1,74 +1,70 @@
-const http = require('https');
-module.exports = function (context, req) {
-	const userIdToken = req.body.userIdToken;
-	let mess_array = [];
-	let mess_body = new Object();
-	let obj_mess = new Object();
-	mess_body.text = req.body.messageText;
-	mess_body.type = "text";
-	mess_array.push(mess_body);
-	obj_mess.messages = mess_array;
-	
-	const json_mess = "";
-	const options = {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'Content-Length': Buffer.byteLength(json_mess)
-		}
-	};
-	const send_url = "https://api.line.me/oauth2/v2.1/verify?id_token=" + userIdToken + "&client_id=" + process.env.LIFF_CHANNEL_ID;
-	const client = http.request(send_url, options, (res) => {
-		let resBody = '';
-		res.on('data', (chunk) => { resBody += chunk; });
-		res.on('end', () => {
-					const resObj = JSON.parse(resBody);
-					if(resObj.sub === null) throw "Error : LINE ID token verify";
-					obj_mess.to = resObj.sub;
-					const json_mess = JSON.stringify(obj_mess);
-					const auth_token = "Bearer " + process.env.LIFF_MSG_AUTH_TOKEN;
-					const send_message_url = "https://api.line.me/v2/bot/message/push";
-					const options = {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': auth_token,
-							'Content-Length': Buffer.byteLength(json_mess)
-						}
-					};
-					const client = http.request(send_message_url, options, (res) => {
-						context.log(res.statusCode);
-						context.log(res.headers);
-						let resBody = '';
-						res.on('data', (chunk) => { resBody += chunk; });
-						res.on('end', () => {
-							context.log(resBody);
-							context.res = {
-										status: 200,
-										body: json_mess + resBody
-							};
-							context.done();
-						});
-					});
-					client.on('error', (e) => {
-							context.log.error(e);
-							context.res = {
-										status: 500,
-										body: json_mess + e.stack
-							};
-							context.done();
-					});
-					client.write(json_mess);
-					client.end();
-		});
-	});
-	client.on('error', (e) => {
-			context.res = {
-						status: 500,
-						body: resBody + e.stack
-			};
-			context.done();
-	});
-	client.write(json_mess);
-	client.end();
+const fetch = require('node-fetch');
+
+module.exports = async function (context, req) {
+
+    // メッセージ送信用オブジェクトを作成
+    const message = {
+        to: req.body.userId,
+        messages: [
+            {
+                "type": "text",
+                "text": req.body.messageText
+            }
+        ]
+    }
+
+    // LINE チャネルアクセストークン取得（成功時は channelAccessToken をセット）
+    const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
+    const channelAccessTokenParams = new URLSearchParams();
+    channelAccessTokenParams.append('grant_type', 'client_credentials');
+    channelAccessTokenParams.append('client_id', process.env.LIFF_MSG_CHANNEL_ID);
+    channelAccessTokenParams.append('client_secret', process.env.LIFF_MSG_CHANNEL_SECRET);
+    let channelAccessToken = '';
+
+    try {
+        const response = await fetch(channelAccessTokenEndpoint, { method: 'POST', body: channelAccessTokenParams });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`LINE Access Token API Error: ${data.error} - ${data.error_description}`);
+        }
+        channelAccessToken = data.access_token;
+    } catch (e) {
+        context.log('Error: ', e);
+        context.res = {
+            status: 500,
+            body: e.message
+        }
+        return;
+    }
+
+    // メッセージ送信
+    const messageEndpoint = 'https://api.line.me/v2/bot/message/push';
+    const messageOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + channelAccessToken
+        },
+        body: JSON.stringify(message)
+    };
+
+    try {
+        const response = await fetch(messageEndpoint, messageOptions);
+        data = await response.json();
+        if (!response.ok) {
+            throw new Error(`LINE Message API Error: ${data.message}`);
+        }
+    } catch (e) {
+        context.log('Error: ', e);
+        context.res = {
+            status: 500,
+            body: e.message
+        }
+        return;
+    }
+
+    // Function のレスポンスを返す
+    context.res = {
+        body: "message sent"
+    };
 };

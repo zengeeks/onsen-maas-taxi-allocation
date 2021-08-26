@@ -3,24 +3,34 @@ const uuid = require('uuid');
 
 module.exports = async function (context, req) {
 
-	// LINE Login の id_token 検証にアクセスするパラメータを設定
-	const send_url = "https://api.line.me/oauth2/v2.1/verify";
-	const options = {
-		method: 'POST',
-		body: 'id_token=' + req.body.userIdToken + '&client_id=' + process.env.LIFF_CHANNEL_ID,
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		}
-	};
+	let userId = "";
 
-	// LINE Login の id_token 検証を実行してユーザーIDを取得
-	const response = await fetch(send_url, options);
-	const data = await response.json();
+	// LINE Login の id_token 検証（成功時は userID をセット）
+	const idTokenEndpoint = "https://api.line.me/oauth2/v2.1/verify";
+	const idTokenParams = new URLSearchParams();
+	idTokenParams.append('id_token', req.body.userIdToken);
+	idTokenParams.append('client_id', process.env.LIFF_CHANNEL_ID);
+
+	try {
+		const response = await fetch(idTokenEndpoint, { method: 'POST', body: idTokenParams });
+		const data = await response.json();
+		if (!response.ok) {
+			throw new Error(`LINE ID Token API Error: ${data.error} - ${data.error_description}`);
+		}
+		userId = data.sub;
+	} catch (e) {
+		context.log('Error: ', e);
+		context.res = {
+			status: 500,
+			body: e.message
+		}
+		return;
+	}
 
 	// Cosmos DB への保存
 	context.bindings.taxiReserveDocument = JSON.stringify({
 		id: uuid.v4(),
-		userId: data.sub,
+		userId: userId,
 		userName: req.body.userName,
 		departurePlace: req.body.departurePlace,
 		arrivalPlace: req.body.arrivalPlace,
@@ -34,9 +44,8 @@ module.exports = async function (context, req) {
 	});
 
 	context.res = {
-		// status defaults to 200 */
 		body: JSON.stringify({
-			userId: data.sub,
+			userId: userId,
 			status: "success"
 		})
 	};

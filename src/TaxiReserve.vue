@@ -161,7 +161,11 @@ export default {
 			// POST
 			axios.post(url,json_taxireserve_mess)
 			.then(response => {
-					this.sendMessage('タクシー配車予約を受け付けました。');
+					this.sendMessage({
+						userId: response.data.userId,
+						messageText: 'タクシー配車予約を受け付けました。'
+					});
+					console.log(response);
 					liff.closeWindow();
 			})
 			.catch(error => {
@@ -185,11 +189,11 @@ export default {
 		},
 
 		//LINEにメッセージ送信の関数
-		sendMessage: function(messageText){
+		sendMessage: function(messageParams){
 			if(liff.isLoggedIn()) {
 				const mess_body  = new Object();
-				mess_body.userIdToken = liff.getIDToken();
-				mess_body.messageText = messageText;
+				mess_body.userId = messageParams.userId;
+				mess_body.messageText = messageParams.messageText;
 				const json_mess = JSON.stringify(mess_body);
 				const url = '/api/sendmessage';
 				// POST

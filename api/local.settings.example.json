@@ -4,8 +4,9 @@
     "languageWorkers__node__arguments": "--inspect=9229",
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "node",
-    "LIFF_CHANNEL_ID": "<CHANNEL_ID_OF_LINE_LOGIN_APP>",
-    "LIFF_MSG_AUTH_TOKEN": "<AUTH_TOKEN_OF_LINE_MESSAGING_API>",
+    "LIFF_CHANNEL_ID": "<LINE_LOGIN Chanenel ID>",
+    "LIFF_MSG_CHANNEL_ID": "<LINE_MESSAGING_API Channel ID>",
+    "LIFF_MSG_CHANNEL_SECRET": "<LINE_MESSAGING_API Channel Secret>",
     "COSMOS_CONNECTION": "<COSMOSDB_CONNECTION_STRING>"
   }
 }
