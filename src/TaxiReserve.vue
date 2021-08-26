@@ -103,35 +103,30 @@ export default {
                 ]
         }
     },
-    //ページを開いた時に実行される
-    mounted () {
-        console.log('ライフサイクル:mounted');
-        liff.init({
-                liffId: process.env.VUE_APP_LIFFID
-        })
-        .then(() => {
-            // start to use LIFF's api
+    // ページを開いた時に実行される
+    mounted: async function() {       
+        try {
+            await liff.init({ liffId: process.env.VUE_APP_LIFFID });
+
             if (liff.isLoggedIn()) {
-                this.getProfile();
+                await this.getProfile();
             } else {
                 liff.login();
             }
-        })
-        .catch((err) => {
-            console.log('エラー：Liff IDを取得できません。' + err);
-        });
+        } catch (e) {
+            console.log('エラー：Liff IDを取得できません。' + e);
+        }
     },
     methods: {
         //プロフィール取得関数
-        getProfile: function(){
-            let self = this;
-            liff.getProfile().then(function(profile) {
-                self.taxiUserName = profile.displayName; //LINEの名前
-                self.userId = profile.userId; //LINEのID
-                console.log('関数:getProfile taxiUserName:[' + profile.displayName + '] userId[' + profile.userId + ']');
-            }).catch(function(error) {
-                console.log('関数:getProfile エラー:[' + error + ']');
-            });
+        getProfile: async function(){
+            try {
+                const profile = await liff.getProfile();
+                this.taxiUserName = profile.displayName; //LINEの名前
+                this.userId = profile.userId; //LINEのID
+            } catch (e) {
+                console.log('関数:getProfile エラー:[' + e + ']');
+            }
         },
 
         //ログアウト処理の関数
