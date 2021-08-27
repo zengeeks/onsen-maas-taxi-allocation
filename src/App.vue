@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import TaxiReserve from "./TaxiReserve.vue";
+import TaxiReserve from './TaxiReserve.vue'
 
 export default {
   name: 'App',
   components: {
     TaxiReserve,
   },
-};
+}
 </script>
 
 <style>
