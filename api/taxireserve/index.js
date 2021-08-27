@@ -9,7 +9,7 @@ module.exports = async function (context, req) {
 	const idTokenEndpoint = "https://api.line.me/oauth2/v2.1/verify";
 	const idTokenParams = new URLSearchParams();
 	idTokenParams.append('id_token', req.body.userIdToken);
-	idTokenParams.append('client_id', process.env.LIFF_CHANNEL_ID);
+	idTokenParams.append('client_id', process.env.LINE_LOGIN_CHANNEL_ID);
 
 	try {
 		const response = await fetch(idTokenEndpoint, { method: 'POST', body: idTokenParams });

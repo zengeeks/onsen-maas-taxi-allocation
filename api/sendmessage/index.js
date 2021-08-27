@@ -17,8 +17,8 @@ module.exports = async function (context, req) {
     const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
     const channelAccessTokenParams = new URLSearchParams();
     channelAccessTokenParams.append('grant_type', 'client_credentials');
-    channelAccessTokenParams.append('client_id', process.env.LIFF_MSG_CHANNEL_ID);
-    channelAccessTokenParams.append('client_secret', process.env.LIFF_MSG_CHANNEL_SECRET);
+    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID);
+    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET);
     let channelAccessToken = '';
 
     try {
