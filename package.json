@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "swa start http://localhost:8080 --run \"npm run serve\" --api api",
+    "start": "swa start http://localhost:8080 --run \"npm run serve\" --api api --devserver-timeout 120000",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "check-devtools": "run-script-os",
