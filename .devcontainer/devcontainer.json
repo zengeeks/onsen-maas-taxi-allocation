@@ -26,7 +26,7 @@
     7071 // for azure-functions-core-tools
   ],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "npm install -g azure-functions-core-tools@3 @azure/static-web-apps-cli@0.6.1 --unsafe-perm true && npm install",
+  "postCreateCommand": "npm install -g azure-functions-core-tools@3 @azure/static-web-apps-cli@0.7.1 --unsafe-perm true && npm install",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "node"
 }
