@@ -48,7 +48,7 @@
                 </div>
                 <br>
                 <div class="input-group mb-3">
-                    <button class="w-100 btn btn-primary btn-lg" @click=Reservation>予　約</button>
+                    <button class="w-100 btn btn-primary btn-lg" @click=reserve>予　約</button>
                 </div>
                 <br>
             </div>
@@ -103,11 +103,11 @@ export default {
                 ]
         }
     },
-    // ページを開いた時に実行される
+    
+    // ページを開いた時に実行
     mounted: async function() {       
         try {
             await liff.init({ liffId: process.env.VUE_APP_LIFFID });
-
             if (liff.isLoggedIn()) {
                 await this.getProfile();
             } else {
@@ -118,19 +118,20 @@ export default {
         }
     },
     methods: {
-        //プロフィール取得関数
-        getProfile: async function(){
+
+        // プロフィール取得関数
+        async getProfile() {
             try {
                 const profile = await liff.getProfile();
-                this.taxiUserName = profile.displayName; //LINEの名前
-                this.userId = profile.userId; //LINEのID
+                this.taxiUserName = profile.displayName; // LINEの名前
+                this.userId = profile.userId; // LINEのID
             } catch (e) {
                 console.log('関数:getProfile エラー:[' + e + ']');
             }
         },
 
-        //ログアウト処理の関数
-        logout: function(){
+        // ログアウト処理の関数
+        logout() {
             if (liff.isLoggedIn()){
                 alert('ログアウトします。');
                 liff.logout();
@@ -138,37 +139,52 @@ export default {
             }
         },
 
-        //予約の関数
-        Reservation: function(){
-            const date = new Date();
-            const taxi_reserve_body  = new Object();
-            taxi_reserve_body.userIdToken	= liff.getIDToken();
-            taxi_reserve_body.userName		= this.taxiUserName;
-            taxi_reserve_body.departurePlace	= this.selectedDeparturePlace;
-            taxi_reserve_body.arrivalPlace		= this.selectedArrivalPlace;
-            taxi_reserve_body.userPhoneNumber	= this.taxiUserPhoneNumber;
-            taxi_reserve_body.userNumberOfPassenger	= Number(this.taxiNumberOfPassenger);
-            taxi_reserve_body.userPassengers	= this.taxiPassengers;
-            taxi_reserve_body.numberOfTickets	= Number(this.selectedTicketNumber);
-            taxi_reserve_body.reservationDatetime	= date.toISOString();
-            const json_taxireserve_mess = JSON.stringify(taxi_reserve_body);
-            const url = '/api/taxireserve'
-            // POST
-            axios.post(url,json_taxireserve_mess)
-            .then(response => {
-                    this.sendMessage({
-                        userId: response.data.userId,
-                        messageText: 'タクシー配車予約を受け付けました。'
-                    });
-                    console.log(response);
-                    liff.closeWindow();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        // 予約の関数
+        async reserve() {
+            const taxiReservation  = {
+                userIdToken: liff.getIDToken(),
+                userName: this.taxiUserName,
+                departurePlace: this.selectedDeparturePlace,
+                arrivalPlace: this.selectedArrivalPlace,
+                userPhoneNumber: this.taxiUserPhoneNumber,
+                userNumberOfPassenger: Number(this.taxiNumberOfPassenger),
+                userPassengers: this.taxiPassengers,
+                numberOfTickets: Number(this.selectedTicketNumber),
+                reservationDatetime: new Date().toISOString()
+            }
+            
+            // taxireserve の API を実行
+            try {
+                const response = await axios.post('/api/taxireserve', JSON.stringify(taxiReservation));
+                this.sendMessage({
+                    userId: response.data.userId,
+                    messageText: 'タクシー配車予約を受け付けました。'
+                });
+                liff.closeWindow();
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
+        // LINEにメッセージを送信する関数
+        async sendMessage(messageParams) {
+            if(!liff.isLoggedIn()){
+                return;
+            }
+            const message  = {
+                userId: messageParams.userId,
+                messageText: messageParams.messageText
+            }
+
+            // sendmessage の API を実行
+            try {
+                await axios.post('/api/sendmessage', JSON.stringify(message));
+            } catch (e) {
+                console.log(e);
+            }
         },
         
-        getTicketNumber: function() {
+        getTicketNumber() {
             let idx1 = Number(this.selectedDeparturePlace);
             let idx2 = Number(this.selectedArrivalPlace);
             if(idx1 === 0 || idx2 === 0){ this.selectedTicketNumber = 0; return;}
@@ -181,27 +197,8 @@ export default {
             }
             this.selectedTicketNumber = this.ticket[(idx1-1)*4-idx1*(idx1+1)/2+idx2-1].number;
             this.isTicketMessageWindow = true;
-        },
-
-        //LINEにメッセージ送信の関数
-        sendMessage: function(messageParams){
-            if(liff.isLoggedIn()) {
-                const mess_body  = new Object();
-                mess_body.userId = messageParams.userId;
-                mess_body.messageText = messageParams.messageText;
-                const json_mess = JSON.stringify(mess_body);
-                const url = '/api/sendmessage';
-                // POST
-                axios.post(url,json_mess)
-                .then(response => {
-                        console.log(response);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
-        },
-    },
+        } 
+    }
 }
 </script>
 
