@@ -193,7 +193,7 @@ export default {
           '/api/taxireserve',
           JSON.stringify(taxiReservation),
         )
-        this.sendMessage({
+        await this.sendMessage({
           userId: response.data.userId,
           messageText: 'タクシー配車予約を受け付けました。',
         })
