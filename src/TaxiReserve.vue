@@ -2,17 +2,10 @@
   <div id="taxiReserveWindow" class="hidden">
     <div class="container" align="center">
       <h3>タクシー配車予約</h3>
-      <form id="taxiReserveWindow">
+      <form id="taxiReserveWindow" novalidate>
         <div class="input-group mb-3">
           <span id="basic-addon1" class="input-group-text">名前</span>
-          <input
-            v-model="taxiUserName"
-            type="text"
-            class="form-control"
-            placeholder=""
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
+          <input v-model="taxiUserName" type="text" class="form-control" />
         </div>
         <div class="input-group mb-3">
           <span id="basic-addon1" class="input-group-text">電話番号</span>
@@ -20,11 +13,9 @@
             v-model="taxiUserPhoneNumber"
             type="text"
             class="form-control"
-            placeholder=""
-            aria-label="Phone Number"
-            aria-describedby="basic-addon1"
-            required
+            :class="{ 'is-invalid': v$.taxiUserPhoneNumber.$error }"
           />
+          <div class="invalid-feedback">電話番号が入力されていません</div>
         </div>
         <div class="col-md-5">
           <label class="form-label" for="departurePlace">乗車場所</label>
@@ -33,12 +24,13 @@
             class="form-select"
             name="departurePlace"
             @change="getTicketNumber"
-            required
+            :class="{ 'is-invalid': v$.selectedDeparturePlace.$error }"
           >
             <option v-for="place in places" :key="place.id" :value="place.id">
               {{ place.name }}
             </option>
           </select>
+          <div class="invalid-feedback">選択してください</div>
         </div>
         <div class="col-md-5">
           <label class="form-label" for="arrivalPlace">降車場所</label>
@@ -47,12 +39,13 @@
             class="form-select"
             name="arrivalPlace"
             @change="getTicketNumber"
-            required
+            :class="{ 'is-invalid': v$.selectedArrivalPlace.$error }"
           >
             <option v-for="place in places" :key="place.id" :value="place.id">
               {{ place.name }}
             </option>
           </select>
+          <div class="invalid-feedback">選択してください</div>
         </div>
         <div id="TicketMessageWindow" class="hidden" align="center">
           <span v-if="isTicketMessageWindow"
@@ -63,12 +56,17 @@
         <br />
         <div class="col-md-5">
           <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
-          <select v-model="taxiNumberOfPassenger" class="form-select" required>
+          <select
+            v-model="taxiNumberOfPassenger"
+            class="form-select"
+            :class="{ 'is-invalid': v$.taxiNumberOfPassenger.$error }"
+          >
             <option value="1" selected>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
           </select>
+          <div class="invalid-feedback">選択してください</div>
         </div>
         <br />
         <div class="input-group mb-3">
@@ -84,7 +82,11 @@
         </div>
         <br />
         <div class="input-group mb-3">
-          <button class="w-100 btn btn-primary btn-lg" @click="reserve">
+          <button
+            type="button"
+            class="w-100 btn btn-primary btn-lg"
+            @click="reserve"
+          >
             予約
           </button>
         </div>
@@ -123,8 +125,8 @@ export default {
       isMessageWindow: false,
       isTicketMessageWindow: false,
       textMessageWindow: '',
-      selectedDeparturePlace: '0',
-      selectedArrivalPlace: '0',
+      selectedDeparturePlace: '',
+      selectedArrivalPlace: '',
       selectedTicketNumber: '',
       ticket: [
         { number: 1 },
@@ -135,7 +137,6 @@ export default {
         { number: 6 },
       ], // 1->2, 1->3, 1->4, 2->3, 2->4, 3->4
       places: [
-        { id: '0', name: '選択してください...' },
         { id: '1', name: '観光会館' },
         { id: '2', name: '○○駅' },
         { id: '3', name: '○○温泉' },
@@ -180,10 +181,9 @@ export default {
 
     // 予約の関数
     async reserve() {
-
       // バリデーション実行
       const isFormCorrect = await this.v$.$validate()
-      console.log("invalid")
+      console.log('バリデーションエラー')
       if (!isFormCorrect) return
 
       const taxiReservation = {
@@ -258,14 +258,14 @@ export default {
     },
   },
   setup: () => ({ v$: useVuelidate() }),
-  validations  () {
+  validations() {
     return {
       taxiUserPhoneNumber: { required },
-      departurePlace: { required },
-      arrivalPlace: { required },
-      numberOfTickets: { required }
+      selectedDeparturePlace: { required },
+      selectedArrivalPlace: { required },
+      taxiNumberOfPassenger: { required },
     }
-  }
+  },
 }
 </script>
 
