@@ -2,7 +2,7 @@
   <div id="taxiReserveWindow" class="hidden">
     <div class="container" align="center">
       <h3>タクシー配車予約</h3>
-      <div id="taxiReserveWindow" class="hidden">
+      <form id="taxiReserveWindow">
         <div class="input-group mb-3">
           <span id="basic-addon1" class="input-group-text">名前</span>
           <input
@@ -23,6 +23,7 @@
             placeholder=""
             aria-label="Phone Number"
             aria-describedby="basic-addon1"
+            required
           />
         </div>
         <div class="col-md-5">
@@ -32,6 +33,7 @@
             class="form-select"
             name="departurePlace"
             @change="getTicketNumber"
+            required
           >
             <option v-for="place in places" :key="place.id" :value="place.id">
               {{ place.name }}
@@ -45,6 +47,7 @@
             class="form-select"
             name="arrivalPlace"
             @change="getTicketNumber"
+            required
           >
             <option v-for="place in places" :key="place.id" :value="place.id">
               {{ place.name }}
@@ -86,7 +89,7 @@
           </button>
         </div>
         <br />
-      </div>
+      </form>
       <div id="MessageWindow" class="hidden" align="center">
         <div class="fw-normal"><div id="message"></div></div>
       </div>
@@ -105,8 +108,10 @@
 <script>
 import liff from '@line/liff'
 import axios from 'axios'
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+
 export default {
-  name: 'TaxiReserve',
   data() {
     return {
       displayName: '',
@@ -175,6 +180,12 @@ export default {
 
     // 予約の関数
     async reserve() {
+
+      // バリデーション実行
+      const isFormCorrect = await this.v$.$validate()
+      console.log("invalid")
+      if (!isFormCorrect) return
+
       const taxiReservation = {
         userIdToken: liff.getIDToken(),
         userName: this.taxiUserName,
@@ -246,6 +257,15 @@ export default {
       this.isTicketMessageWindow = true
     },
   },
+  setup: () => ({ v$: useVuelidate() }),
+  validations  () {
+    return {
+      taxiUserPhoneNumber: { required },
+      departurePlace: { required },
+      arrivalPlace: { required },
+      numberOfTickets: { required }
+    }
+  }
 }
 </script>
 
