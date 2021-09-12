@@ -1,12 +1,12 @@
 <template>
-  <div id="taxiReserveWindow" class="container" align="center">
-    <h3>タクシー配車予約</h3>
-    <form id="taxiReserveWindow" novalidate>
-      <div class="input-group mb-3">
+  <div id="taxiReserveWindow">
+    <h2 class="text-center mt-5 mb-4">タクシー配車予約</h2>
+    <form class="row row-cols-1 g-3" novalidate>
+      <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">名前</span>
         <input v-model="taxiUserName" type="text" class="form-control" />
       </div>
-      <div class="input-group mb-3">
+      <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">電話番号</span>
         <input
           v-model="taxiUserPhoneNumber"
@@ -16,7 +16,7 @@
         />
         <div class="invalid-feedback">電話番号が入力されていません</div>
       </div>
-      <div class="col-md-5">
+      <div class="col">
         <label class="form-label" for="departurePlace">乗車場所</label>
         <select
           v-model="selectedDeparturePlace"
@@ -31,7 +31,7 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <div class="col-md-5">
+      <div class="col">
         <label class="form-label" for="arrivalPlace">降車場所</label>
         <select
           v-model="selectedArrivalPlace"
@@ -46,13 +46,12 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <div v-if="isTicketMessageWindow">
-        <span class="text-primary">
+      <div class="col" v-if="isTicketMessageWindow">
+        <div class="alert alert-info">
           必要なチケット枚数は {{ selectedTicketNumber }} 枚です
-        </span>
+        </div>
       </div>
-      <br />
-      <div class="col-md-5">
+      <div class="col">
         <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
         <select
           v-model="taxiNumberOfPassenger"
@@ -66,8 +65,7 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <br />
-      <div class="input-group mb-3">
+      <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">同乗者</span>
         <input
           v-model="taxiPassengers"
@@ -78,8 +76,7 @@
           aria-describedby="basic-addon1"
         />
       </div>
-      <br />
-      <div class="input-group mb-3">
+      <div class="col input-group">
         <button
           type="button"
           class="w-100 btn btn-primary btn-lg"
@@ -88,12 +85,8 @@
           予約
         </button>
       </div>
-      <br />
     </form>
-    <div id="MessageWindow" class="hidden" align="center">
-      <div class="fw-normal"><div id="message"></div></div>
-    </div>
-    <footer class="my-5 pt-5 text-muted text-center text-small">
+    <footer class="pt-5 text-muted text-center text-small">
       <p class="mb-1">&copy; 2021 温泉MaaS</p>
       <ul class="list-inline">
         <li class="list-inline-item"><a href="#">プライバシーポリシー</a></li>
@@ -268,7 +261,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .input-group-text {
   min-width: 6em;
 }
