@@ -1,112 +1,109 @@
 <template>
-  <div id="taxiReserveWindow" class="hidden">
-    <div class="container" align="center">
-      <h3>タクシー配車予約</h3>
-      <div id="taxiReserveWindow" class="hidden">
-        <div class="input-group mb-3">
-          <span id="basic-addon1" class="input-group-text">名前</span>
-          <input
-            v-model="taxiUserName"
-            type="text"
-            class="form-control"
-            placeholder=""
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
-        </div>
-        <div class="input-group mb-3">
-          <span id="basic-addon1" class="input-group-text">電話番号</span>
-          <input
-            v-model="taxiUserPhoneNumber"
-            type="text"
-            class="form-control"
-            placeholder=""
-            aria-label="Phone Number"
-            aria-describedby="basic-addon1"
-          />
-        </div>
-        <div class="col-md-5">
-          <label class="form-label" for="departurePlace">乗車場所</label>
-          <select
-            v-model="selectedDeparturePlace"
-            class="form-select"
-            name="departurePlace"
-            @change="getTicketNumber"
-          >
-            <option v-for="place in places" :key="place.id" :value="place.id">
-              {{ place.name }}
-            </option>
-          </select>
-        </div>
-        <div class="col-md-5">
-          <label class="form-label" for="arrivalPlace">降車場所</label>
-          <select
-            v-model="selectedArrivalPlace"
-            class="form-select"
-            name="arrivalPlace"
-            @change="getTicketNumber"
-          >
-            <option v-for="place in places" :key="place.id" :value="place.id">
-              {{ place.name }}
-            </option>
-          </select>
-        </div>
-        <div id="TicketMessageWindow" class="hidden" align="center">
-          <span v-if="isTicketMessageWindow"
-            ><br />必要なチケット枚数 {{ selectedTicketNumber }}枚</span
-          >
-          <span v-if="!isTicketMessageWindow"><br /><br /></span>
-        </div>
-        <br />
-        <div class="col-md-5">
-          <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
-          <select v-model="taxiNumberOfPassenger" class="form-select" required>
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-        </div>
-        <br />
-        <div class="input-group mb-3">
-          <span id="basic-addon1" class="input-group-text">同乗者</span>
-          <input
-            v-model="taxiPassengers"
-            type="text"
-            class="form-control"
-            placeholder=""
-            aria-label="Passengers"
-            aria-describedby="basic-addon1"
-          />
-        </div>
-        <br />
-        <div class="input-group mb-3">
-          <button class="w-100 btn btn-primary btn-lg" @click="reserve">
-            予約
-          </button>
-        </div>
-        <br />
+  <div id="taxiReserveWindow">
+    <h2 class="text-center mt-5 mb-4">タクシー配車予約</h2>
+    <form class="row row-cols-1 g-3" novalidate>
+      <div class="col input-group">
+        <span id="basic-addon1" class="input-group-text">名前</span>
+        <input v-model="taxiUserName" type="text" class="form-control" />
       </div>
-      <div id="MessageWindow" class="hidden" align="center">
-        <div class="fw-normal"><div id="message"></div></div>
+      <div class="col input-group">
+        <span id="basic-addon1" class="input-group-text">電話番号</span>
+        <input
+          v-model="taxiUserPhoneNumber"
+          type="text"
+          class="form-control"
+          :class="{ 'is-invalid': v$.taxiUserPhoneNumber.$error }"
+        />
+        <div class="invalid-feedback">電話番号が入力されていません</div>
       </div>
-      <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; 2021 温泉MaaS</p>
-        <ul class="list-inline">
-          <li class="list-inline-item"><a href="#">プライバシーポリシー</a></li>
-          <li class="list-inline-item"><a href="#">規約</a></li>
-          <li class="list-inline-item"><a href="#">サポート</a></li>
-        </ul>
-      </footer>
-    </div>
+      <div class="col">
+        <label class="form-label" for="departurePlace">乗車場所</label>
+        <select
+          v-model="selectedDeparturePlace"
+          class="form-select"
+          name="departurePlace"
+          @change="getTicketNumber"
+          :class="{ 'is-invalid': v$.selectedDeparturePlace.$error }"
+        >
+          <option v-for="place in places" :key="place.id" :value="place.id">
+            {{ place.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback">選択してください</div>
+      </div>
+      <div class="col">
+        <label class="form-label" for="arrivalPlace">降車場所</label>
+        <select
+          v-model="selectedArrivalPlace"
+          class="form-select"
+          name="arrivalPlace"
+          @change="getTicketNumber"
+          :class="{ 'is-invalid': v$.selectedArrivalPlace.$error }"
+        >
+          <option v-for="place in places" :key="place.id" :value="place.id">
+            {{ place.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback">選択してください</div>
+      </div>
+      <div class="col" v-if="isTicketMessageWindow">
+        <div class="alert alert-info">
+          必要なチケット枚数は {{ selectedTicketNumber }} 枚です
+        </div>
+      </div>
+      <div class="col">
+        <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
+        <select
+          v-model="taxiNumberOfPassenger"
+          class="form-select"
+          :class="{ 'is-invalid': v$.taxiNumberOfPassenger.$error }"
+        >
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        <div class="invalid-feedback">選択してください</div>
+      </div>
+      <div class="col input-group">
+        <span id="basic-addon1" class="input-group-text">同乗者</span>
+        <input
+          v-model="taxiPassengers"
+          type="text"
+          class="form-control"
+          placeholder=""
+          aria-label="Passengers"
+          aria-describedby="basic-addon1"
+        />
+      </div>
+      <div class="col input-group">
+        <button
+          type="button"
+          class="w-100 btn btn-primary btn-lg"
+          @click="reserve"
+        >
+          予約
+        </button>
+      </div>
+    </form>
+    <footer class="pt-5 text-muted text-center text-small">
+      <p class="mb-1">&copy; 2021 温泉MaaS</p>
+      <ul class="list-inline">
+        <li class="list-inline-item"><a href="#">プライバシーポリシー</a></li>
+        <li class="list-inline-item"><a href="#">規約</a></li>
+        <li class="list-inline-item"><a href="#">サポート</a></li>
+      </ul>
+    </footer>
   </div>
 </template>
 
 <script>
 import liff from '@line/liff'
 import axios from 'axios'
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+
 export default {
-  name: 'TaxiReserve',
   data() {
     return {
       displayName: '',
@@ -118,8 +115,8 @@ export default {
       isMessageWindow: false,
       isTicketMessageWindow: false,
       textMessageWindow: '',
-      selectedDeparturePlace: '0',
-      selectedArrivalPlace: '0',
+      selectedDeparturePlace: '',
+      selectedArrivalPlace: '',
       selectedTicketNumber: '',
       ticket: [
         { number: 1 },
@@ -130,7 +127,6 @@ export default {
         { number: 6 },
       ], // 1->2, 1->3, 1->4, 2->3, 2->4, 3->4
       places: [
-        { id: '0', name: '選択してください...' },
         { id: '1', name: '観光会館' },
         { id: '2', name: '○○駅' },
         { id: '3', name: '○○温泉' },
@@ -175,6 +171,13 @@ export default {
 
     // 予約の関数
     async reserve() {
+      // バリデーション実行
+      const isFormCorrect = await this.v$.$validate()
+      if (!isFormCorrect) {
+        console.log('バリデーションエラー')
+        return
+      }
+
       const taxiReservation = {
         userIdToken: liff.getIDToken(),
         userName: this.taxiUserName,
@@ -246,10 +249,19 @@ export default {
       this.isTicketMessageWindow = true
     },
   },
+  setup: () => ({ v$: useVuelidate() }),
+  validations() {
+    return {
+      taxiUserPhoneNumber: { required },
+      selectedDeparturePlace: { required },
+      selectedArrivalPlace: { required },
+      taxiNumberOfPassenger: { required },
+    }
+  },
 }
 </script>
 
-<style>
+<style scoped>
 .input-group-text {
   min-width: 6em;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="container">
     <TaxiReserve />
   </div>
 </template>
@@ -12,7 +12,7 @@ export default {
   components: {
     TaxiReserve,
   },
-  mounted: function() {
+  mounted: function () {
     this.initVConsole()
   },
   methods: {
@@ -28,11 +28,11 @@ export default {
           },
           onClearLog: function () {
             console.log('vConsole on clearLog')
-          }
+          },
         })
       }
     },
-  }
+  },
 }
 </script>
 
@@ -41,24 +41,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
-}
-
-h1,
-h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
 }
 
 a {
