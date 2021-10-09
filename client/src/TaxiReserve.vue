@@ -22,8 +22,8 @@
           v-model="selectedDeparturePlace"
           class="form-select"
           name="departurePlace"
-          @change="getTicketNumber"
           :class="{ 'is-invalid': v$.selectedDeparturePlace.$error }"
+          @change="getTicketNumber"
         >
           <option v-for="place in places" :key="place.id" :value="place.id">
             {{ place.name }}
@@ -37,8 +37,8 @@
           v-model="selectedArrivalPlace"
           class="form-select"
           name="arrivalPlace"
-          @change="getTicketNumber"
           :class="{ 'is-invalid': v$.selectedArrivalPlace.$error }"
+          @change="getTicketNumber"
         >
           <option v-for="place in places" :key="place.id" :value="place.id">
             {{ place.name }}
@@ -46,7 +46,7 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <div class="col" v-if="isTicketMessageWindow">
+      <div v-if="isTicketMessageWindow" class="col">
         <div class="alert alert-info">
           必要なチケット枚数は {{ selectedTicketNumber }} 枚です
         </div>
@@ -104,6 +104,7 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 
 export default {
+  setup: () => ({ v$: useVuelidate() }),
   data() {
     return {
       displayName: '',
@@ -249,7 +250,6 @@ export default {
       this.isTicketMessageWindow = true
     },
   },
-  setup: () => ({ v$: useVuelidate() }),
   validations() {
     return {
       taxiUserPhoneNumber: { required },
