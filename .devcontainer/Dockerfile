@@ -13,5 +13,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
 
 RUN npm install --unsafe-perm true -g \
+  npm@~7
+
+RUN npm install --unsafe-perm true -g \
   azure-functions-core-tools@3 \
   @azure/static-web-apps-cli@0.8.0
