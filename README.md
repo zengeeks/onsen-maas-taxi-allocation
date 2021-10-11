@@ -6,6 +6,10 @@
 
 セルフペースドハンズオンを実施される方は、 [docs/self-paced-handson](./docs/self-paced-handson) へお進みください。
 
+### ご質問、トラブルシューティングの受付
+
+ご質問やトラブルシューティングは、このリポジトリの [GitHub Discussions](https://github.com/zengeeks/onsen-maas-taxi-allocation/discussions) にて受け付けます。
+
 ## サンプルコード
 
 ### ディレクトリ構成
