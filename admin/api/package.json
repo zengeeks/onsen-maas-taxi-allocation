@@ -1,0 +1,7 @@
+{
+	"dependencies": {
+		"tedious": "^9.0.1",
+	},
+	"devDependencies": {
+	}
+}
