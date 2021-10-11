@@ -2,3 +2,23 @@
 
 ### 全体シーケンス
 ![全体シーケンス](https://user-images.githubusercontent.com/76543846/123759154-98af9700-d8fa-11eb-9f5e-b9dc712514d8.png)
+
+## サンプルコード
+
+### ディレクトリ構成
+
+以下のような構成で、サンプルコードを格納しています。
+
+```bash
+├── .vscode             ... Visual Studio Code 用プロジェクト設定
+├── api                 ... Backend API (Azure Functions 対応) 
+├── README.md           ... このファイル
+└── ...                 ... 静的サイトのファイル一式
+```
+### 開発
+
+下記コマンドで、ローカル環境にて Backend API を含めた開発環境を実行できます。
+
+```bash
+swa start --api-location api
+```
