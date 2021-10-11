@@ -4,8 +4,12 @@
   "version": "1.2.0",
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": "~14",
+    "npm": "~7"
+  },
   "scripts": {
-    "start": "swa start http://localhost:8080 --run \"npm run dev\" --api-location api --devserver-timeout 120000",
+    "start": "swa start http://localhost:3000 --run \"npm run dev\" --api-location api --devserver-timeout 120000",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
