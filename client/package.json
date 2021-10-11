@@ -5,7 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start": "swa start http://localhost:8080 --run \"npm run dev\" --api api --devserver-timeout 120000",
+    "start": "swa start http://localhost:8080 --run \"npm run dev\" --api-location api --devserver-timeout 120000",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
