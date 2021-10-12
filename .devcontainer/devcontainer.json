@@ -25,7 +25,7 @@
 		"dbaeumer.vscode-eslint",
     "ms-vscode.js-debug-nightly",
     "ms-azuretools.vscode-azurefunctions",
-    "octref.vetur"
+    "johnsoncodehk.volar"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
