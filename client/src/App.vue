@@ -6,6 +6,7 @@
 
 <script>
 import TaxiReserve from './TaxiReserve.vue'
+import VConsole from 'vconsole'
 
 export default {
   name: 'App',
@@ -18,12 +19,12 @@ export default {
   methods: {
     // vConsole 初期化
     initVConsole() {
-      if (process.env.VUE_APP_USE_VCONSOLE3 === 'true') {
-        window.vConsole = new window.VConsole({
+      if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
+        new VConsole({
           defaultPlugins: ['system', 'network', 'element', 'storage'],
           maxLogNumber: 1000,
           onReady: function () {
-            console.log(process.env.VUE_APP_USE_VCONSOLE)
+            console.log(import.meta.env.VITE_APP_USE_VCONSOLE)
             console.log('vConsole is ready.')
           },
           onClearLog: function () {
