@@ -6,3 +6,8 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+interface ImportMetaEnv {
+  VITE_APP_LIFFID: string
+  VITE_APP_USE_VCONSOLE: string
+}
