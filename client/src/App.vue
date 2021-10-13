@@ -7,8 +7,9 @@
 <script lang="ts">
 import TaxiReserve from './TaxiReserve.vue'
 import VConsole from 'vconsole'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'App',
   components: {
     TaxiReserve,
@@ -28,7 +29,7 @@ export default {
       })
     }
   },
-}
+})
 </script>
 
 <style>
