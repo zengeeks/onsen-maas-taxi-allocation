@@ -102,38 +102,8 @@ import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { defineComponent } from 'vue'
-
-// TODO: 型定義は別途切り出す
-interface Place {
-  id: string
-  name: string
-}
-
-interface Ticket {
-  number: number
-}
-
-interface TaxiReservation {
-  displayName: string
-  userId: string
-  taxiUserName: string
-  taxiUserPhoneNumber: string
-  taxiNumberOfPassenger: string
-  taxiPassengers: string
-  isMessageWindow: boolean
-  isTicketMessageWindow: boolean
-  textMessageWindow: string
-  selectedDeparturePlace: string
-  selectedArrivalPlace: string
-  selectedTicketNumber: number
-  tickets: Ticket[]
-  places: Place[]
-}
-
-interface Message {
-  userId: string
-  messageText: string
-}
+import { TaxiReservation } from './models/TaxiReservation'
+import { Message } from './models/Message'
 
 export default defineComponent({
   setup: () => ({ v$: useVuelidate() }),
