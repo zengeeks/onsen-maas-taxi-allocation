@@ -102,8 +102,8 @@ import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { defineComponent } from 'vue'
-import { TaxiReservation } from './models/TaxiReservation'
-import { Message } from './models/Message'
+import { TaxiReservation } from '../models/TaxiReservation'
+import { Message } from '../models/Message'
 
 export default defineComponent({
   setup: () => ({ v$: useVuelidate() }),

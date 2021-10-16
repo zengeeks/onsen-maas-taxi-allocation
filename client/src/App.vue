@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import TaxiReserve from './TaxiReserve.vue'
+import TaxiReserve from './components/TaxiReserve.vue'
 import VConsole from 'vconsole'
 import { defineComponent } from 'vue'
 
