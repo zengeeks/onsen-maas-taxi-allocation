@@ -4,37 +4,32 @@
   </div>
 </template>
 
-<script>
-import TaxiReserve from './TaxiReserve.vue'
+<script lang="ts">
+import TaxiReserve from './components/TaxiReserve.vue'
 import VConsole from 'vconsole'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'App',
   components: {
     TaxiReserve,
   },
   mounted: function () {
-    this.initVConsole()
+    if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
+      new VConsole({
+        defaultPlugins: ['system', 'network', 'element', 'storage'],
+        maxLogNumber: 1000,
+        onReady: function () {
+          console.log(import.meta.env.VITE_APP_USE_VCONSOLE)
+          console.log('vConsole is ready.')
+        },
+        onClearLog: function () {
+          console.log('vConsole on clearLog')
+        },
+      })
+    }
   },
-  methods: {
-    // vConsole 初期化
-    initVConsole() {
-      if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
-        new VConsole({
-          defaultPlugins: ['system', 'network', 'element', 'storage'],
-          maxLogNumber: 1000,
-          onReady: function () {
-            console.log(import.meta.env.VITE_APP_USE_VCONSOLE)
-            console.log('vConsole is ready.')
-          },
-          onClearLog: function () {
-            console.log('vConsole on clearLog')
-          },
-        })
-      }
-    },
-  },
-}
+})
 </script>
 
 <style>

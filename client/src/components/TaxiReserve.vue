@@ -71,7 +71,6 @@
           v-model="taxiPassengers"
           type="text"
           class="form-control"
-          placeholder=""
           aria-label="Passengers"
           aria-describedby="basic-addon1"
         />
@@ -97,13 +96,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import liff from '@line/liff'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
+import { defineComponent } from 'vue'
+import { TaxiReservation } from '../models/TaxiReservation'
+import { Message } from '../models/Message'
 
-export default {
+export default defineComponent({
   setup: () => ({ v$: useVuelidate() }),
   data() {
     return {
@@ -118,8 +120,8 @@ export default {
       textMessageWindow: '',
       selectedDeparturePlace: '',
       selectedArrivalPlace: '',
-      selectedTicketNumber: '',
-      ticket: [
+      selectedTicketNumber: 0,
+      tickets: [
         { number: 1 },
         { number: 2 },
         { number: 3 },
@@ -133,7 +135,7 @@ export default {
         { id: '3', name: '○○温泉' },
         { id: '4', name: '○○カフェ' },
       ],
-    }
+    } as TaxiReservation
   },
 
   // ページを開いた時に実行
@@ -193,14 +195,14 @@ export default {
 
       // taxireserve の API を実行
       try {
-        const response = await axios.post(
+        const response: AxiosResponse<Message> = await axios.post(
           '/api/taxireserve',
           JSON.stringify(taxiReservation),
         )
         await this.sendMessage({
           userId: response.data.userId,
           messageText: 'タクシー配車予約を受け付けました。',
-        })
+        } as Message)
         liff.closeWindow()
       } catch (e) {
         console.log(e)
@@ -208,13 +210,9 @@ export default {
     },
 
     // LINEにメッセージを送信する関数
-    async sendMessage(messageParams) {
+    async sendMessage(message: Message) {
       if (!liff.isLoggedIn()) {
         return
-      }
-      const message = {
-        userId: messageParams.userId,
-        messageText: messageParams.messageText,
       }
 
       // sendmessage の API を実行
@@ -246,7 +244,7 @@ export default {
         idx1 = tmpIdx
       }
       this.selectedTicketNumber =
-        this.ticket[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
+        this.tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
       this.isTicketMessageWindow = true
     },
   },
@@ -258,7 +256,7 @@ export default {
       taxiNumberOfPassenger: { required },
     }
   },
-}
+})
 </script>
 
 <style scoped>
