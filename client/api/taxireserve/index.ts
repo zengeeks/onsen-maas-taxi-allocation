@@ -1,7 +1,8 @@
-const fetch = require('node-fetch');
-const uuid = require('uuid');
+import { AzureFunction, Context, HttpRequest } from '@azure/functions'
+import { v4 } from 'uuid';
+import fetch from 'node-fetch';
 
-module.exports = async function (context, req) {
+const taxireserve: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
 	let userId = "";
 
@@ -29,7 +30,7 @@ module.exports = async function (context, req) {
 
 	// Cosmos DB への保存
 	context.bindings.taxiReserveDocument = JSON.stringify({
-		id: uuid.v4(),
+		id: v4(),
 		userId: userId,
 		userName: req.body.userName,
 		departurePlace: req.body.departurePlace,
@@ -50,3 +51,5 @@ module.exports = async function (context, req) {
 		})
 	};
 };
+
+export default taxireserve;

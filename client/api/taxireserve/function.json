@@ -24,5 +24,6 @@
       "connectionStringSetting": "COSMOS_CONNECTION",
       "direction": "out"
     }
-  ]
+  ],
+  "scriptFile": "../dist/taxireserve/index.js"
 }

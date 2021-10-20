@@ -1,6 +1,7 @@
-const fetch = require('node-fetch');
+import { AzureFunction, Context, HttpRequest } from '@azure/functions'
+import fetch from 'node-fetch';
 
-module.exports = async function (context, req) {
+const sendmessage: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
     // メッセージ送信用オブジェクトを作成
     const message = {
@@ -50,7 +51,7 @@ module.exports = async function (context, req) {
 
     try {
         const response = await fetch(messageEndpoint, messageOptions);
-        data = await response.json();
+        const data = await response.json();
         if (!response.ok) {
             throw new Error(`LINE Message API Error: ${data.message}`);
         }
@@ -68,3 +69,5 @@ module.exports = async function (context, req) {
         body: "message sent"
     };
 };
+
+export default sendmessage;
