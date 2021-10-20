@@ -202,7 +202,7 @@ export default defineComponent({
         await this.sendMessage({
           userId: response.data.userId,
           messageText: 'タクシー配車予約を受け付けました。',
-        } as Message)
+        })
         liff.closeWindow()
       } catch (e) {
         console.log(e)
