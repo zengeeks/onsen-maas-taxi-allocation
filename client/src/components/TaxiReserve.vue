@@ -140,27 +140,19 @@ export default defineComponent({
 
   // ページを開いた時に実行
   mounted: async function () {
-    try {
-      await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
-      if (liff.isLoggedIn()) {
-        await this.getProfile()
-      } else {
-        liff.login()
-      }
-    } catch (e) {
-      console.log('エラー：Liff IDを取得できません。' + e)
+    await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
+    if (liff.isLoggedIn()) {
+      await this.getProfile()
+    } else {
+      liff.login()
     }
   },
   methods: {
     // プロフィール取得関数
     async getProfile() {
-      try {
-        const profile = await liff.getProfile()
-        this.taxiUserName = profile.displayName // LINEの名前
-        this.userId = profile.userId // LINEのID
-      } catch (e) {
-        console.log('関数:getProfile エラー:[' + e + ']')
-      }
+      const profile = await liff.getProfile()
+      this.taxiUserName = profile.displayName // LINEの名前
+      this.userId = profile.userId // LINEのID
     },
 
     // ログアウト処理の関数
@@ -194,19 +186,15 @@ export default defineComponent({
       }
 
       // taxireserve の API を実行
-      try {
-        const response: AxiosResponse<Message> = await axios.post(
-          '/api/taxireserve',
-          JSON.stringify(taxiReservation),
-        )
-        await this.sendMessage({
-          userId: response.data.userId,
-          messageText: 'タクシー配車予約を受け付けました。',
-        })
-        liff.closeWindow()
-      } catch (e) {
-        console.log(e)
-      }
+      const response: AxiosResponse<Message> = await axios.post(
+        '/api/taxireserve',
+        JSON.stringify(taxiReservation),
+      )
+      await this.sendMessage({
+        userId: response.data.userId,
+        messageText: 'タクシー配車予約を受け付けました。',
+      })
+      liff.closeWindow()
     },
 
     // LINEにメッセージを送信する関数
@@ -216,11 +204,7 @@ export default defineComponent({
       }
 
       // sendmessage の API を実行
-      try {
-        await axios.post('/api/sendmessage', JSON.stringify(message))
-      } catch (e) {
-        console.log(e)
-      }
+      await axios.post('/api/sendmessage', JSON.stringify(message))
     },
 
     getTicketNumber() {
