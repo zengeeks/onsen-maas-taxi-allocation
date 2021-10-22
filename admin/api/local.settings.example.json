@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "",
+    "COSMOSDB_ENDPOINT": "<COSMOSDB_ENDPOINT>",
+    "COSMOSDB_KEY": "<COSMOSDB_KEY>",
+    "COSMOSDB_DATABASE": "TaxiReserveDb",
+    "COSMOSDB_CONTAINER": "TaxiReserveCol"
+  }
+}

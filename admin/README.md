@@ -21,5 +21,7 @@
 下記コマンドで、ローカル環境にて Backend API を含めた開発環境を実行できます。
 
 ```bash
-swa start --api-location api
+swa start --api-location api --port 4281
 ```
+
+タクシー予約一覧は `http://127.0.0.1:4281/taxireservationlist.html` からアクセスします。

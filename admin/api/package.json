@@ -1,7 +1,6 @@
 {
 	"dependencies": {
+		"@azure/cosmos": "^3.14.1",
 		"tedious": "^9.0.1"
-	},
-	"devDependencies": {
 	}
 }

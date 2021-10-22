@@ -37,14 +37,15 @@ function sendLINEPushMessage(userId, messageText) {
 * 予約一覧取得処理
 */
 function getTaxiReservationList() {
-	const date = new Date();
-	const msg_body = new Object();
-	msg_body.fromDate = date.toLocaleDateString() + " 00:00:00";
-	msg_body.toDate = date.toLocaleDateString() + " 23:59:59";
-	const msg_json = JSON.stringify(msg_body);
-	const send_url = api_url + "/api/taxireservelist";
+	const now = new Date();
+	const fromDate = now.toISOString();
+	const toDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+	let query = new URLSearchParams();
+	query.append("fromDate", fromDate);
+	query.append("toDate", toDate);
+	const send_url = "/api/taxireservelist?" + query.toString();
 	const request = new XMLHttpRequest();
-	request.open("POST", send_url);
+	request.open("GET", send_url);
 	request.setRequestHeader("Content-Type", "application/json");
 	request.onreadystatechange = function () {
 		if (request.readyState === 4 && request.status === 200) {
@@ -54,7 +55,7 @@ function getTaxiReservationList() {
 			for (i = 0; i < taxiReservationListObj.length; i++) {
 				if (taxiReservationListObj[i] !== null) {
 					tableElement += "<tr><td>";
-					tableElement += taxiReservationListObj[i].reservationId;
+					tableElement += taxiReservationListObj[i].id;
 					tableElement += "</td><td>";
 					tableElement += getDateFormatedText(new Date(taxiReservationListObj[i].reservationDatetime), 'YYYY年MM月DD日 hh時mm分');
 					tableElement += "</td><td>";
@@ -83,7 +84,7 @@ function getTaxiReservationList() {
 			elem.innerHTML = tableElement;
 		}
 	};
-	request.send(msg_json);
+	request.send();
 }
 /**
 * ステータス変更
