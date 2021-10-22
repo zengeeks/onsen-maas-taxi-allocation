@@ -1,5 +1,3 @@
-const api_url = "ここにAzure Static Web Appsのエンドポイントを記載する";
-
 const places = ["", "観光会館", "○○駅", "○○温泉", "○○カフェ"];
 const reservation_status = ["", "受付", "手配中", "手配済み", "キャンセル済"];
 
@@ -14,6 +12,7 @@ function getDateFormatedText(date, format) {
 	format = format.replace(/mm/, date.getMinutes());
 	return format;
 }
+
 /**
 * アクセスしてきたユーザーへのLINEメッセージの送信
 * @param {string} userId		メッセージ送信するユーザーLINE ID
@@ -27,12 +26,13 @@ function sendLINEPushMessage(userId, messageText) {
 	mess_body.userId = userId;
 	mess_body.messageText = messageText;
 	const json_mess = JSON.stringify(mess_body);
-	const send_url = api_url + "/api/sendmessage";
+	const send_url = "/api/sendmessage";
 	const request = new XMLHttpRequest();
 	request.open("POST", send_url);
 	request.setRequestHeader("Content-Type", "application/json");
 	request.send(json_mess);
 }
+
 /**
 * 予約一覧取得処理
 */
@@ -73,9 +73,9 @@ function getTaxiReservationList() {
 					tableElement += "</td><td>";
 					tableElement += reservation_status[Number(taxiReservationListObj[i].reservationStatus)];
 					tableElement += "</td><td>";
-					tableElement += "<button type=\"submit\" onclick=\"changeStatus(" + taxiReservationListObj[i].reservationId + ",\'" + taxiReservationListObj[i].userId + "\', 2)\">手配中</button>";
-					tableElement += "<button type=\"submit\" onclick=\"changeStatus(" + taxiReservationListObj[i].reservationId + ",\'" + taxiReservationListObj[i].userId + "\', 3)\">手配済</button>";
-					tableElement += "<button type=\"submit\" onclick=\"changeStatus(" + taxiReservationListObj[i].reservationId + ",\'" + taxiReservationListObj[i].userId + "\', 4)\">キャンセル</button>";
+					tableElement += "<button type=\"submit\" onclick=\"changeStatus(\'" + taxiReservationListObj[i].id + "\',\'" + taxiReservationListObj[i].userId + "\', 2)\">手配中</button>";
+					tableElement += "<button type=\"submit\" onclick=\"changeStatus(\'" + taxiReservationListObj[i].id + "\',\'" + taxiReservationListObj[i].userId + "\', 3)\">手配済</button>";
+					tableElement += "<button type=\"submit\" onclick=\"changeStatus(\'" + taxiReservationListObj[i].id + "\',\'" + taxiReservationListObj[i].userId + "\', 4)\">キャンセル</button>";
 					tableElement += "</td><td>";
 					tableElement += getDateFormatedText(new Date(taxiReservationListObj[i].latestUpdateDatetime), 'YYYY年MM月DD日 hh時mm分');
 					tableElement += "</td></tr>";
@@ -86,16 +86,18 @@ function getTaxiReservationList() {
 	};
 	request.send();
 }
+
 /**
 * ステータス変更
 */
-function changeStatus(reservationId, userId, statusCd) {
+function changeStatus(id, userId, statusCd) {
 	const date = new Date();
 	const msg_body = new Object();
-	msg_body.reservationId = reservationId;
+	msg_body.id = id;
+	msg_body.userId = userId;
 	msg_body.reservationStatus = statusCd;
 	const msg_json = JSON.stringify(msg_body);
-	const send_url = api_url + "/api/taxichangestatus";
+	const send_url = "/api/taxichangestatus";
 	const request = new XMLHttpRequest();
 	request.open("POST", send_url);
 	request.setRequestHeader("Content-Type", "application/json");
@@ -104,7 +106,7 @@ function changeStatus(reservationId, userId, statusCd) {
 			//正常
 			getTaxiReservationList();
 			if (statusCd === 3) {
-				sendLINEPushMessage(userId, "タクシー配車を行いました。しばらくお待ちください.");
+				sendLINEPushMessage(userId, "タクシー配車を行いました。しばらくお待ちください。");
 			}
 			else if (statusCd === 4) {
 				sendLINEPushMessage(userId, "申し訳ありません。タクシーを手配できませんでした。");
@@ -113,6 +115,7 @@ function changeStatus(reservationId, userId, statusCd) {
 	};
 	request.send(msg_json);
 }
+
 /**
 * ページ読み込み時の処理
 */
