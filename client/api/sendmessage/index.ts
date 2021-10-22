@@ -1,6 +1,5 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions'
 import fetch from 'node-fetch';
-import { JWS } from 'node-jose';
 
 const sendmessage: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
@@ -16,53 +15,15 @@ const sendmessage: AzureFunction = async function (context: Context, req: HttpRe
     }
 
     // LINE チャネルアクセストークン取得（成功時は channelAccessToken をセット）
-    const privateKey = process.env.LINE_ASSERTION_SIGNATURE_SECRET
-    if (!privateKey) {
-        throw new Error('LINE_ASSERTION_SIGNATURE_SECRET not set.')
-    }
-
-    const kid = process.env.LINE_ASSERTION_SIGNATURE_KEY_ID
-    if (!kid) {
-        throw new Error('LINE_ASSERTION_SIGNATURE_KEY_ID not set.')
-    }
-
-    const channelId = process.env.LINE_MESSAGING_API_CHANNEL_ID
-    if (!channelId) {
-        throw new Error('LINE_MESSAGING_API_CHANNEL_ID not set.')
-    }
-
-    const header = {
-        alg: 'RS256',
-        typ: 'JWT',
-        kid,
-    }
-
-    const payload = {
-        iss: channelId,
-        sub: channelId,
-        aud: 'https://api.line.me/',
-        exp: Math.floor(new Date().getTime() / 1000) + 60 * 30,
-        token_exp: 60 * 60 * 24 * 30,
-    }
-
-    const jwt = await JWS.createSign(
-        { format: 'compact', fields: header },
-        JSON.parse(privateKey),
-    )
-        .update(JSON.stringify(payload))
-        .final()
-    
+    const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
     const channelAccessTokenParams = new URLSearchParams();
+    channelAccessTokenParams.append('grant_type', 'client_credentials');
+    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID);
+    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET);
     let channelAccessToken = '';
-    channelAccessTokenParams.append('grant_type', 'client_credentials')
-    channelAccessTokenParams.append(
-        'client_assertion_type',
-        'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-    )
-    channelAccessTokenParams.append('client_assertion', jwt as unknown as string)
 
     try {
-        const response = await fetch('https://api.line.me/oauth2/v2.1/token', { method: 'POST', body: channelAccessTokenParams });
+        const response = await fetch(channelAccessTokenEndpoint, { method: 'POST', body: channelAccessTokenParams });
         const data = await response.json();
         if (!response.ok) {
             throw new Error(`LINE Access Token API Error: ${data.error} - ${data.error_description}`);
