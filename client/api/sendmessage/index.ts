@@ -18,8 +18,8 @@ const sendmessage: AzureFunction = async function (context: Context, req: HttpRe
     const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
     const channelAccessTokenParams = new URLSearchParams();
     channelAccessTokenParams.append('grant_type', 'client_credentials');
-    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID);
-    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET);
+    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID as string);
+    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET as string);
     let channelAccessToken = '';
 
     try {
@@ -31,9 +31,11 @@ const sendmessage: AzureFunction = async function (context: Context, req: HttpRe
         channelAccessToken = data.access_token;
     } catch (e) {
         context.log('Error: ', e);
-        context.res = {
-            status: 500,
-            body: e.message
+        if (e instanceof Error) {
+            context.res = {
+                status: 500,
+                body: e.message
+            }
         }
         return;
     }
@@ -57,9 +59,11 @@ const sendmessage: AzureFunction = async function (context: Context, req: HttpRe
         }
     } catch (e) {
         context.log('Error: ', e);
-        context.res = {
-            status: 500,
-            body: e.message
+        if (e instanceof Error) {
+            context.res = {
+                status: 500,
+                body: e.message
+            }
         }
         return;
     }
