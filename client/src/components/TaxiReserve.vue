@@ -88,9 +88,15 @@
     <footer class="pt-5 text-muted text-center text-small">
       <p class="mb-1">&copy; 2021 温泉MaaS</p>
       <ul class="list-inline">
-        <li class="list-inline-item"><a href="#">プライバシーポリシー</a></li>
-        <li class="list-inline-item"><a href="#">規約</a></li>
-        <li class="list-inline-item"><a href="#">サポート</a></li>
+        <li class="list-inline-item">
+          <a href="#">プライバシーポリシー</a>
+        </li>
+        <li class="list-inline-item">
+          <a href="#">規約</a>
+        </li>
+        <li class="list-inline-item">
+          <a href="#">サポート</a>
+        </li>
       </ul>
     </footer>
   </div>
@@ -101,14 +107,14 @@ import liff from '@line/liff'
 import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { defineComponent } from 'vue'
+import { defineComponent, reactive, onMounted } from 'vue'
 import { TaxiReservation } from '../models/TaxiReservation'
 import { Message } from '../models/Message'
 
 export default defineComponent({
-  setup: () => ({ v$: useVuelidate() }),
-  data() {
-    return {
+  setup() {
+    // data
+    const reservation: TaxiReservation = reactive({
       displayName: '',
       userId: '',
       taxiUserName: '',
@@ -135,39 +141,28 @@ export default defineComponent({
         { id: '3', name: '○○温泉' },
         { id: '4', name: '○○カフェ' },
       ],
-    } as TaxiReservation
-  },
+    })
 
-  // ページを開いた時に実行
-  mounted: async function () {
-    await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
-    if (liff.isLoggedIn()) {
-      await this.getProfile()
-    } else {
-      liff.login()
+    // validation rules
+    const rules = {
+      taxiUserPhoneNumber: { required },
+      selectedDeparturePlace: { required },
+      selectedArrivalPlace: { required },
+      taxiNumberOfPassenger: { required },
     }
-  },
-  methods: {
-    // プロフィール取得関数
-    async getProfile() {
-      const profile = await liff.getProfile()
-      this.taxiUserName = profile.displayName // LINEの名前
-      this.userId = profile.userId // LINEのID
-    },
+    const v$ = useVuelidate(rules, reservation)
 
-    // ログアウト処理の関数
-    logout() {
-      if (liff.isLoggedIn()) {
-        alert('ログアウトします。')
-        liff.logout()
-        window.location.reload()
-      }
-    },
+    // プロフィール取得関数
+    const getProfile = async () => {
+      const profile = await liff.getProfile()
+      reservation.taxiUserName = profile.displayName // LINEの名前
+      reservation.userId = profile.userId // LINEのID
+    }
 
     // 予約の関数
-    async reserve() {
+    const reserve = async () => {
       // バリデーション実行
-      const isFormCorrect = await this.v$.$validate()
+      const isFormCorrect = await v$.value.$validate()
       if (!isFormCorrect) {
         console.log('バリデーションエラー')
         return
@@ -175,13 +170,13 @@ export default defineComponent({
 
       const taxiReservation = {
         userIdToken: liff.getIDToken(),
-        userName: this.taxiUserName,
-        departurePlace: this.selectedDeparturePlace,
-        arrivalPlace: this.selectedArrivalPlace,
-        userPhoneNumber: this.taxiUserPhoneNumber,
-        userNumberOfPassenger: Number(this.taxiNumberOfPassenger),
-        userPassengers: this.taxiPassengers,
-        numberOfTickets: Number(this.selectedTicketNumber),
+        userName: reservation.taxiUserName,
+        departurePlace: reservation.selectedDeparturePlace,
+        arrivalPlace: reservation.selectedArrivalPlace,
+        userPhoneNumber: reservation.taxiUserPhoneNumber,
+        userNumberOfPassenger: Number(reservation.taxiNumberOfPassenger),
+        userPassengers: reservation.taxiPassengers,
+        numberOfTickets: Number(reservation.selectedTicketNumber),
         reservationDatetime: new Date().toISOString(),
       }
 
@@ -190,36 +185,36 @@ export default defineComponent({
         '/api/taxireserve',
         JSON.stringify(taxiReservation),
       )
-      await this.sendMessage({
+      await sendMessage({
         userId: response.data.userId,
         messageText: 'タクシー配車予約を受け付けました。',
       })
       liff.closeWindow()
-    },
+    }
 
     // LINEにメッセージを送信する関数
-    async sendMessage(message: Message) {
+    const sendMessage = async (message: Message) => {
       if (!liff.isLoggedIn()) {
         return
       }
 
       // sendmessage の API を実行
       await axios.post('/api/sendmessage', JSON.stringify(message))
-    },
+    }
 
-    getTicketNumber() {
-      let idx1 = Number(this.selectedDeparturePlace)
-      let idx2 = Number(this.selectedArrivalPlace)
+    const getTicketNumber = () => {
+      let idx1 = Number(reservation.selectedDeparturePlace)
+      let idx2 = Number(reservation.selectedArrivalPlace)
       if (idx1 === 0 || idx2 === 0) {
-        this.selectedTicketNumber = 0
+        reservation.selectedTicketNumber = 0
         return
       }
       if (idx1 > 4 || idx2 > 4) {
-        this.selectedTicketNumber = 0
+        reservation.selectedTicketNumber = 0
         return
       }
       if (idx1 === idx2) {
-        this.selectedTicketNumber = 0
+        reservation.selectedTicketNumber = 0
         return
       }
       if (idx1 > idx2) {
@@ -227,17 +222,37 @@ export default defineComponent({
         idx2 = idx1
         idx1 = tmpIdx
       }
-      this.selectedTicketNumber =
-        this.tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
-      this.isTicketMessageWindow = true
-    },
-  },
-  validations() {
+      reservation.selectedTicketNumber =
+        reservation.tickets[
+          (idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1
+        ].number
+      reservation.isTicketMessageWindow = true
+    }
+
+    // ページを開いた時に実行
+    onMounted(async () => {
+      await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
+      if (liff.isLoggedIn()) {
+        await getProfile()
+      } else {
+        liff.login()
+      }
+    })
+
+    // return
     return {
-      taxiUserPhoneNumber: { required },
-      selectedDeparturePlace: { required },
-      selectedArrivalPlace: { required },
-      taxiNumberOfPassenger: { required },
+      taxiUserName: reservation.taxiUserName,
+      taxiUserPhoneNumber: reservation.taxiUserPhoneNumber,
+      selectedDeparturePlace: reservation.selectedDeparturePlace,
+      places: reservation.places,
+      selectedArrivalPlace: reservation.selectedArrivalPlace,
+      isTicketMessageWindow: reservation.isTicketMessageWindow,
+      selectedTicketNumber: reservation.selectedTicketNumber,
+      taxiNumberOfPassenger: reservation.taxiNumberOfPassenger,
+      taxiPassengers: reservation.taxiPassengers,
+      v$,
+      reserve,
+      getTicketNumber,
     }
   },
 })
