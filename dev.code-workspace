@@ -8,7 +8,10 @@
     }
   ],
   "settings": {
-    "debug.internalConsoleOptions": "neverOpen"
+    "debug.internalConsoleOptions": "neverOpen",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    }
   },
   "extensions": {
     "recommendations": [
