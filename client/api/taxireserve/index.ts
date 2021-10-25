@@ -1,4 +1,4 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions'
+import { AzureFunction } from '@azure/functions'
 import { v4 } from 'uuid';
 import fetch from 'node-fetch';
 
@@ -31,7 +31,7 @@ const taxireserve: AzureFunction = async function (context, req) {
 	}
 
 	// Cosmos DB への保存
-	context.bindings.taxiReserveDocument = JSON.stringify({
+	context.bindings.taxiReserveDocument = {
 		id: v4(),
 		userId: userId,
 		userName: req.body.userName,
@@ -44,13 +44,13 @@ const taxireserve: AzureFunction = async function (context, req) {
 		reservationStatus: 1,
 		reservationDatetime: new Date(req.body.reservationDatetime),
 		latestUpdateDatetime: new Date().toISOString()
-	});
+	};
 
 	context.res = {
-		body: JSON.stringify({
+		body: {
 			userId: userId,
 			status: "success"
-		})
+		}
 	};
 };
 
