@@ -1,73 +1,31 @@
-const Connection = require('tedious').Connection;
-const TedRequest = require('tedious').Request;
-const TYPES = require('tedious').TYPES;
+const { CosmosClient } = require("@azure/cosmos");
 
-module.exports = function (context, req) {
-	const reservationId			 = req.body.reservationId;
-	const reservationStatus		 = req.body.reservationStatus;
+module.exports = async function (context, req) {
+	// TODO: Validate
+	// req.body.reservationStatus
 
-	const config = {  
-		server: process.env.DB_CONNECT_SERVER_NAME,
-		authentication: {
-			type: 'default',
-			options: {
-				userName: process.env.DB_CONNECT_USER,
-				password: process.env.DB_CONNECT_PASS,
-			}
-		},
-		options: {
-			encrypt:  true, 
-			database: process.env.DB_CONNECT_DB_NAME
-		}  
-	};
-	
-	const connection = new Connection(config);
-	connection.on('connect', function(err) {
-		const mess_body  = new Object();
-		if (err) {
-			mess_body.status = "error";
-			mess_body.message = err.stack;
-			context.res = {
-					status: 500,
-					body: JSON.stringify(mess_body)
-			};
-			context.done();
+	try {
+		const endpoint = process.env.COSMOSDB_ENDPOINT;
+		const key = process.env.COSMOSDB_KEY;
+		const client = new CosmosClient({ endpoint, key });
+
+		const { database } = await client.database(process.env.COSMOSDB_DATABASE).read();
+		const { container } = await database.container(process.env.COSMOSDB_CONTAINER).read();
+		const item = container.item(req.body.id, req.body.userId);
+		const { resource: reservation } = await item.read();
+		reservation.reservationStatus = req.body.reservationStatus;
+		const { resource: updatedReservation } = await container.items.upsert(reservation);
+
+		context.res = {
+			status: 200,
+			body: "Taxi reservation data is inserted to DB."
+		};
+	} catch (e) {
+		context.log('Error: ', e);
+		context.res = {
+			status: e.code,
+			body: e.message
 		}
-		else{
-			queryDatabase();
-		}
-	});
-
-	function queryDatabase() {
-		const query = "UPDATE [dbo].[TaxiReservationTbl] SET ReservationStatus = @paramReservationStatus, LatestUpdateDatetime = @paramLatestUpdateDatetime WHERE ReservationId = @paramReservationId;";
-		request = new TedRequest(query, function(err) {
-			const mess_body  = new Object();
-			if (err) {
-				mess_body.status = "error";
-				mess_body.message = err.stack;
-				context.res = {
-						status: 500,
-						body: JSON.stringify(mess_body)
-				};
-				context.done();
-			}
-			else{
-				mess_body.status = "success";
-				mess_body.message = "Taxi reservation data is inserted to DB.";
-				context.res = {
-						status: 200,
-						body: JSON.stringify(mess_body)
-				};
-				context.done();
-			}
-		});
-		const date = new Date();
-		request.addParameter('paramReservationId', TYPES.Int, reservationId);
-		request.addParameter('paramReservationStatus', TYPES.Int, reservationStatus);
-		request.addParameter('paramLatestUpdateDatetime', TYPES.DateTime, date.toISOString());
-		request.on('requestCompleted', function () {
-			connection.close();
-		});
-		connection.execSql(request);
+		return;
 	}
 };
