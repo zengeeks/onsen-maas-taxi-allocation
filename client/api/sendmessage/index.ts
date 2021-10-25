@@ -1,6 +1,7 @@
-const fetch = require('node-fetch');
+import { AzureFunction, Context, HttpRequest } from '@azure/functions'
+import fetch from 'node-fetch';
 
-module.exports = async function (context, req) {
+const sendmessage: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
     // メッセージ送信用オブジェクトを作成
     const message = {
@@ -13,12 +14,30 @@ module.exports = async function (context, req) {
         ]
     }
 
+    // 環境変数から LINE の接続情報を取得
+    const channelId = process.env.LINE_MESSAGING_API_CHANNEL_ID;
+    if (!channelId) {
+        context.res = {
+            status: 500,
+            body: "channelId is not set"
+        };
+        return;
+    }
+    const channelSecret = process.env.LINE_MESSAGING_API_CHANNEL_SECRET;
+    if (!channelSecret) {
+        context.res = {
+            status: 500,
+            body: "channelSecret is not set"
+        };
+        return;
+    }
+
     // LINE チャネルアクセストークン取得（成功時は channelAccessToken をセット）
     const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
     const channelAccessTokenParams = new URLSearchParams();
     channelAccessTokenParams.append('grant_type', 'client_credentials');
-    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID);
-    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET);
+    channelAccessTokenParams.append('client_id', channelId);
+    channelAccessTokenParams.append('client_secret', channelSecret);
     let channelAccessToken = '';
 
     try {
@@ -30,9 +49,11 @@ module.exports = async function (context, req) {
         channelAccessToken = data.access_token;
     } catch (e) {
         context.log('Error: ', e);
-        context.res = {
-            status: 500,
-            body: e.message
+        if (e instanceof Error) {
+            context.res = {
+                status: 500,
+                body: e.message
+            }
         }
         return;
     }
@@ -50,15 +71,17 @@ module.exports = async function (context, req) {
 
     try {
         const response = await fetch(messageEndpoint, messageOptions);
-        data = await response.json();
+        const data = await response.json();
         if (!response.ok) {
             throw new Error(`LINE Message API Error: ${data.message}`);
         }
     } catch (e) {
         context.log('Error: ', e);
-        context.res = {
-            status: 500,
-            body: e.message
+        if (e instanceof Error) {
+            context.res = {
+                status: 500,
+                body: e.message
+            }
         }
         return;
     }
@@ -68,3 +91,5 @@ module.exports = async function (context, req) {
         body: "message sent"
     };
 };
+
+export default sendmessage;

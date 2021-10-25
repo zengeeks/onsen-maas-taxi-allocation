@@ -27,6 +27,7 @@ Vue.js プロジェクトに関する補足は下記をご参考ください。
 npm install
 pushd api
 npm install
+npm run build
 popd
 ```
 

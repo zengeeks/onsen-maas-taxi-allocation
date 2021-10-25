@@ -1,7 +1,8 @@
-const fetch = require('node-fetch');
-const uuid = require('uuid');
+import { AzureFunction } from '@azure/functions'
+import { v4 } from 'uuid';
+import fetch from 'node-fetch';
 
-module.exports = async function (context, req) {
+const taxireserve: AzureFunction = async function (context, req) {
 
 	let userId = "";
 
@@ -9,7 +10,7 @@ module.exports = async function (context, req) {
 	const idTokenEndpoint = "https://api.line.me/oauth2/v2.1/verify";
 	const idTokenParams = new URLSearchParams();
 	idTokenParams.append('id_token', req.body.userIdToken);
-	idTokenParams.append('client_id', process.env.LINE_LOGIN_CHANNEL_ID);
+	idTokenParams.append('client_id', process.env.LINE_LOGIN_CHANNEL_ID as string);
 
 	try {
 		const response = await fetch(idTokenEndpoint, { method: 'POST', body: idTokenParams });
@@ -20,16 +21,18 @@ module.exports = async function (context, req) {
 		userId = data.sub;
 	} catch (e) {
 		context.log('Error: ', e);
-		context.res = {
-			status: 500,
-			body: e.message
+		if (e instanceof Error) {
+			context.res = {
+				status: 500,
+				body: e.message
+			}
 		}
 		return;
 	}
 
 	// Cosmos DB への保存
-	context.bindings.taxiReserveDocument = JSON.stringify({
-		id: uuid.v4(),
+	context.bindings.taxiReserveDocument = {
+		id: v4(),
 		userId: userId,
 		userName: req.body.userName,
 		departurePlace: req.body.departurePlace,
@@ -41,12 +44,14 @@ module.exports = async function (context, req) {
 		reservationStatus: 1,
 		reservationDatetime: new Date(req.body.reservationDatetime),
 		latestUpdateDatetime: new Date().toISOString()
-	});
+	};
 
 	context.res = {
-		body: JSON.stringify({
+		body: {
 			userId: userId,
 			status: "success"
-		})
+		}
 	};
 };
+
+export default taxireserve;
