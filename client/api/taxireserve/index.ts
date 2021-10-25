@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions'
 import { v4 } from 'uuid';
 import fetch from 'node-fetch';
 
-const taxireserve: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const taxireserve: AzureFunction = async function (context, req) {
 
 	let userId = "";
 
