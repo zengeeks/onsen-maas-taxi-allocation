@@ -23,7 +23,7 @@
         "name": "Attach to both apps",
         "configurations": [
           "Launch Vue app, API and SWA",
-          "Attach to admin functions"
+          "[admin] Launch Vue app, API with SWA"
         ]
       }
     ]

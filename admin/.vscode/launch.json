@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to admin functions",
+      "name": "[admin] Launch Vue app, API with SWA",
       "type": "node",
       "request": "attach",
-      "port": 9229,
-      "preLaunchTask": "func: host start"
+      "port": 9230,
+      "preLaunchTask": "npm run start:dev"
     }
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/static-web-apps-cli/main/schema/swa-cli.config.schema.json",
+  "configurations": {
+    "dev": {
+      "apiLocation": "api",
+      "apiPort": 7072,
+      "port": 4281,
+      "devserverTimeout": 120000
+    }
+  }
+}
