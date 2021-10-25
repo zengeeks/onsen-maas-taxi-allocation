@@ -14,12 +14,30 @@ const sendmessage: AzureFunction = async function (context: Context, req: HttpRe
         ]
     }
 
+    // 環境変数から LINE の接続情報を取得
+    const channelId = process.env.LINE_MESSAGING_API_CHANNEL_ID;
+    if (!channelId) {
+        context.res = {
+            status: 500,
+            body: "channelId is not set"
+        };
+        return;
+    }
+    const channelSecret = process.env.LINE_MESSAGING_API_CHANNEL_SECRET;
+    if (!channelSecret) {
+        context.res = {
+            status: 500,
+            body: "channelSecret is not set"
+        };
+        return;
+    }
+
     // LINE チャネルアクセストークン取得（成功時は channelAccessToken をセット）
     const channelAccessTokenEndpoint = "https://api.line.me/v2/oauth/accessToken";
     const channelAccessTokenParams = new URLSearchParams();
     channelAccessTokenParams.append('grant_type', 'client_credentials');
-    channelAccessTokenParams.append('client_id', process.env.LINE_MESSAGING_API_CHANNEL_ID as string);
-    channelAccessTokenParams.append('client_secret', process.env.LINE_MESSAGING_API_CHANNEL_SECRET as string);
+    channelAccessTokenParams.append('client_id', channelId);
+    channelAccessTokenParams.append('client_secret', channelSecret);
     let channelAccessToken = '';
 
     try {
