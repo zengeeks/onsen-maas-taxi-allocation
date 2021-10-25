@@ -1,6 +1,7 @@
 {
   "recommendations": [
-    "ms-azuretools.vscode-azurefunctions",
-    "humao.rest-client"
+    "johnsoncodehk.volar",
+    "humao.rest-client",
+    "ms-azuretools.vscode-azurefunctions"
   ]
 }
