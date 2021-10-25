@@ -9,8 +9,8 @@ module.exports = async function (context, req) {
 		const key = process.env.COSMOSDB_KEY;
 		const client = new CosmosClient({ endpoint, key });
 
-		const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-		const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER });
+		const { database } = await client.database(process.env.COSMOSDB_DATABASE).read();
+		const { container } = await database.container(process.env.COSMOSDB_CONTAINER).read();
 		const item = container.item(req.body.id, req.body.userId);
 		const { resource: reservation } = await item.read();
 		reservation.reservationStatus = req.body.reservationStatus;

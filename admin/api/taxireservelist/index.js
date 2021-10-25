@@ -6,11 +6,10 @@ module.exports = async function (context, req) {
 		const key = process.env.COSMOSDB_KEY;
 		const client = new CosmosClient({ endpoint, key });
 
-		const { database } = await client.databases.createIfNotExists({ id: process.env.COSMOSDB_DATABASE });
-		const { container } = await database.containers.createIfNotExists({ id: process.env.COSMOSDB_CONTAINER });
+		const { database } = await client.database(process.env.COSMOSDB_DATABASE).read();
+		const { container } = await database.container(process.env.COSMOSDB_CONTAINER).read();
 		const { resources } = await container.items
 			.query({
-
 				query: "SELECT c.id, c.userId, c.userName, c.departurePlace, c.arrivalPlace, c.userPhoneNumber, c.userNumberOfPassenger, c.userPassengers, c.numberOfTickets, c.reservationStatus, c.reservationDatetime, c.latestUpdateDatetime FROM c WHERE @fromDate <= c.reservationDatetime and c.reservationDatetime < @toDate ORDER BY c.id DESC",
 				parameters: [
 					{
