@@ -107,41 +107,37 @@ import liff from '@line/liff'
 import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { defineComponent, reactive, onMounted } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { TaxiReservation } from '../models/TaxiReservation'
 import { Message } from '../models/Message'
 
 export default defineComponent({
   setup() {
-    // data
-    const reservation: TaxiReservation = reactive({
-      displayName: '',
-      userId: '',
-      taxiUserName: '',
-      taxiUserPhoneNumber: '',
-      taxiNumberOfPassenger: '',
-      taxiPassengers: '',
-      isMessageWindow: false,
-      isTicketMessageWindow: false,
-      textMessageWindow: '',
-      selectedDeparturePlace: '',
-      selectedArrivalPlace: '',
-      selectedTicketNumber: 0,
-      tickets: [
-        { number: 1 },
-        { number: 2 },
-        { number: 3 },
-        { number: 4 },
-        { number: 5 },
-        { number: 6 },
-      ], // 1->2, 1->3, 1->4, 2->3, 2->4, 3->4
-      places: [
-        { id: '1', name: '観光会館' },
-        { id: '2', name: '○○駅' },
-        { id: '3', name: '○○温泉' },
-        { id: '4', name: '○○カフェ' },
-      ],
-    })
+    // reactive data
+    const taxiUserName = ref('')
+    const taxiUserPhoneNumber = ref('')
+    const taxiNumberOfPassenger = ref('')
+    const taxiPassengers = ref('')
+    const isTicketMessageWindow = ref(false)
+    const selectedDeparturePlace = ref('')
+    const selectedArrivalPlace = ref('')
+    const selectedTicketNumber = ref(0)
+
+    // constant
+    const tickets = [
+      { number: 1 },
+      { number: 2 },
+      { number: 3 },
+      { number: 4 },
+      { number: 5 },
+      { number: 6 },
+    ] // 1->2, 1->3, 1->4, 2->3, 2->4, 3->4
+    const places = [
+      { id: '1', name: '観光会館' },
+      { id: '2', name: '○○駅' },
+      { id: '3', name: '○○温泉' },
+      { id: '4', name: '○○カフェ' },
+    ]
 
     // validation rules
     const rules = {
@@ -150,13 +146,17 @@ export default defineComponent({
       selectedArrivalPlace: { required },
       taxiNumberOfPassenger: { required },
     }
-    const v$ = useVuelidate(rules, reservation)
+    const v$ = useVuelidate(rules, {
+      taxiUserPhoneNumber,
+      selectedDeparturePlace,
+      selectedArrivalPlace,
+      taxiNumberOfPassenger,
+    })
 
     // プロフィール取得関数
     const getProfile = async () => {
       const profile = await liff.getProfile()
-      reservation.taxiUserName = profile.displayName // LINEの名前
-      reservation.userId = profile.userId // LINEのID
+      taxiUserName.value = profile.displayName // LINEの名前
     }
 
     // 予約の関数
@@ -168,15 +168,16 @@ export default defineComponent({
         return
       }
 
-      const taxiReservation = {
+      // payload
+      const taxiReservation: TaxiReservation = {
         userIdToken: liff.getIDToken(),
-        userName: reservation.taxiUserName,
-        departurePlace: reservation.selectedDeparturePlace,
-        arrivalPlace: reservation.selectedArrivalPlace,
-        userPhoneNumber: reservation.taxiUserPhoneNumber,
-        userNumberOfPassenger: Number(reservation.taxiNumberOfPassenger),
-        userPassengers: reservation.taxiPassengers,
-        numberOfTickets: Number(reservation.selectedTicketNumber),
+        userName: taxiUserName.value,
+        departurePlace: selectedDeparturePlace.value,
+        arrivalPlace: selectedArrivalPlace.value,
+        userPhoneNumber: taxiUserPhoneNumber.value,
+        userNumberOfPassenger: Number(taxiNumberOfPassenger.value),
+        userPassengers: taxiPassengers.value,
+        numberOfTickets: Number(selectedTicketNumber.value),
         reservationDatetime: new Date().toISOString(),
       }
 
@@ -203,18 +204,18 @@ export default defineComponent({
     }
 
     const getTicketNumber = () => {
-      let idx1 = Number(reservation.selectedDeparturePlace)
-      let idx2 = Number(reservation.selectedArrivalPlace)
+      let idx1 = Number(selectedDeparturePlace.value)
+      let idx2 = Number(selectedArrivalPlace.value)
       if (idx1 === 0 || idx2 === 0) {
-        reservation.selectedTicketNumber = 0
+        selectedTicketNumber.value = 0
         return
       }
       if (idx1 > 4 || idx2 > 4) {
-        reservation.selectedTicketNumber = 0
+        selectedTicketNumber.value = 0
         return
       }
       if (idx1 === idx2) {
-        reservation.selectedTicketNumber = 0
+        selectedTicketNumber.value = 0
         return
       }
       if (idx1 > idx2) {
@@ -222,11 +223,9 @@ export default defineComponent({
         idx2 = idx1
         idx1 = tmpIdx
       }
-      reservation.selectedTicketNumber =
-        reservation.tickets[
-          (idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1
-        ].number
-      reservation.isTicketMessageWindow = true
+      selectedTicketNumber.value =
+        tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
+      isTicketMessageWindow.value = true
     }
 
     // ページを開いた時に実行
@@ -241,15 +240,15 @@ export default defineComponent({
 
     // return
     return {
-      taxiUserName: reservation.taxiUserName,
-      taxiUserPhoneNumber: reservation.taxiUserPhoneNumber,
-      selectedDeparturePlace: reservation.selectedDeparturePlace,
-      places: reservation.places,
-      selectedArrivalPlace: reservation.selectedArrivalPlace,
-      isTicketMessageWindow: reservation.isTicketMessageWindow,
-      selectedTicketNumber: reservation.selectedTicketNumber,
-      taxiNumberOfPassenger: reservation.taxiNumberOfPassenger,
-      taxiPassengers: reservation.taxiPassengers,
+      taxiUserName,
+      taxiUserPhoneNumber,
+      selectedDeparturePlace,
+      places,
+      selectedArrivalPlace,
+      isTicketMessageWindow,
+      selectedTicketNumber,
+      taxiNumberOfPassenger,
+      taxiPassengers,
       v$,
       reserve,
       getTicketNumber,
