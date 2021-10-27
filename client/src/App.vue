@@ -7,27 +7,29 @@
 <script lang="ts">
 import TaxiReserve from './components/TaxiReserve.vue'
 import VConsole from 'vconsole'
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 
 export default defineComponent({
   name: 'App',
   components: {
     TaxiReserve,
   },
-  mounted: function () {
-    if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
-      new VConsole({
-        defaultPlugins: ['system', 'network', 'element', 'storage'],
-        maxLogNumber: 1000,
-        onReady: function () {
-          console.log(import.meta.env.VITE_APP_USE_VCONSOLE)
-          console.log('vConsole is ready.')
-        },
-        onClearLog: function () {
-          console.log('vConsole on clearLog')
-        },
-      })
-    }
+  setup() {
+    onMounted(() => {
+      if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
+        new VConsole({
+          defaultPlugins: ['system', 'network', 'element', 'storage'],
+          maxLogNumber: 1000,
+          onReady: function () {
+            console.log(import.meta.env.VITE_APP_USE_VCONSOLE)
+            console.log('vConsole is ready.')
+          },
+          onClearLog: function () {
+            console.log('vConsole on clearLog')
+          },
+        })
+      }
+    })
   },
 })
 </script>
