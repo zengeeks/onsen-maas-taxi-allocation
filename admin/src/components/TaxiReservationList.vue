@@ -1,17 +1,19 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core'
 import axios, { AxiosResponse } from 'axios'
-import { TaxiReservation } from '../models/TaxiReservation'
-import { TaxiReservationListData } from '../models/TaxiReservationListData'
+import TaxiReservationRow from './TaxiReservationRow.vue'
+import { TaxiReservationResponse } from '../models/TaxiReservationResponse'
+import { TaxiReservationResponseList } from '../models/TaxiReservationResponseList'
 
 export default defineComponent({
   components: {
+    TaxiReservationRow,
   },
 
   data() {
     return {
-      taxiReservationList: [],
-    } as TaxiReservationListData
+      taxiReservationResponseList: [],
+    } as TaxiReservationResponseList
   },
 
   created: async function () {
@@ -22,7 +24,7 @@ export default defineComponent({
   methods: {
     // 継続的な情報の更新を行う
     async refresh() {
-      setInterval(this.updateTaxiReservationList, 10000);
+      setInterval(this.updateTaxiReservationList, 10000)
     },
 
     // タクシー予約一覧を取得する
@@ -41,17 +43,13 @@ export default defineComponent({
       query.append('fromDate', fromDate)
       query.append('toDate', toDate)
 
-      const response: AxiosResponse<TaxiReservation[]> = await axios.get(
-        '/api/taxireservelist?' + query.toString(),
-      )
-      this.taxiReservationList = response.data
+      const response: AxiosResponse<TaxiReservationResponse[]> =
+        await axios.get('/api/taxireservelist?' + query.toString())
+
+      if (response.status == 200 && Array.isArray(response.data)) {
+        this.taxiReservationResponseList = response.data
+      }
     },
-
-    // TODO: ステータスを更新する
-    async updateStatus() {},
-
-    // TODO: ステータス更新をユーザーへ通知する
-    async sendLinePushMessage() {},
   },
 })
 </script>
@@ -61,7 +59,7 @@ export default defineComponent({
     <div class="text-center mt-5 mb-4">
       <h2>タクシー予約一覧</h2>
     </div>
-    <table class="table">
+    <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -73,24 +71,16 @@ export default defineComponent({
           <th scope="col">チケット枚数</th>
           <th scope="col">乗車人数</th>
           <th scope="col">現在の状態</th>
-          <th scope="col">操作</th>
+          <th scope="col-6">操作</th>
           <th scope="col">最終更新日時</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="reservation in taxiReservationList" :key="reservation.id">
-          <td>{{ reservation.id }}</td>
-          <td>{{ reservation.reservationDatetime }}</td>
-          <td>{{ reservation.userName }}</td>
-          <td>{{ reservation.userPhoneNumber }}</td>
-          <td>{{ reservation.departurePlace }}</td>
-          <td>{{ reservation.arrivalPlace }}</td>
-          <td>{{ reservation.numberOfTickets }}</td>
-          <td>{{ reservation.userNumberOfPassenger }}</td>
-          <td>{{ reservation.reservationStatus }}</td>
-          <td>button</td>
-          <td>{{ reservation.latestUpdateDatetime }}</td>
-        </tr>
+        <TaxiReservationRow
+          v-for="reservationResponse in taxiReservationResponseList"
+          :key="reservationResponse.id"
+          :reservation-response="reservationResponse"
+        />
       </tbody>
     </table>
   </div>
