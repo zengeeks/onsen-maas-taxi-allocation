@@ -112,7 +112,7 @@ export default defineComponent({
 
 <template>
   <tr v-if="reservation">
-    <td>{{ reservation.id }}</td>
+    <td class="font-monospace">{{ reservation.id }}</td>
     <td>
       {{
         getDateFormatedText(
@@ -135,24 +135,24 @@ export default defineComponent({
         :disabled="!reservation.isRequested() || reservation.isCanceled()"
         @click="startAllocation"
       >
-        手配開始
-      </button>
+        手配開始</button
+      ><br />
       <button
         type="button"
         class="btn btn-primary"
         :disabled="!reservation.isAllocating() || reservation.isCanceled()"
         @click="completeAllocation"
       >
-        手配完了
-      </button>
+        手配完了</button
+      ><br />
       <button
         type="button"
         class="btn btn-secondary"
         :disabled="reservation.isCanceled()"
         @click="cancelAllocation"
       >
-        キャンセル
-      </button>
+        キャンセル</button
+      ><br />
     </td>
     <td>
       {{ getDateFormatedText(reservation.updated, 'YYYY年MM月DD日 hh時mm分') }}
