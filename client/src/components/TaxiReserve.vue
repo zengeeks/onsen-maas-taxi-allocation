@@ -83,20 +83,6 @@
         </button>
       </div>
     </form>
-    <footer class="pt-5 text-muted text-center text-small">
-      <p class="mb-1">&copy; 2021 温泉MaaS</p>
-      <ul class="list-inline">
-        <li class="list-inline-item">
-          <a href="#">プライバシーポリシー</a>
-        </li>
-        <li class="list-inline-item">
-          <a href="#">規約</a>
-        </li>
-        <li class="list-inline-item">
-          <a href="#">サポート</a>
-        </li>
-      </ul>
-    </footer>
   </div>
 </template>
 
