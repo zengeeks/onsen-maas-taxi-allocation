@@ -13,18 +13,31 @@
 ```bash
 ├── .vscode             ... Visual Studio Code 用プロジェクト設定
 ├── api                 ... Backend API (Azure Functions 対応) 
+├── public              ... Vue.js プロジェクトの public ディレクトリ
+├── src                 ... Vue.js プロジェクトの src ディレクトリ
 ├── README.md           ... このファイル
 └── ...                 ... 静的サイトのファイル一式
 ```
 ### 開発
 
-下記コマンドで、ローカル環境にて Backend API を含めた開発環境を実行できます。
+#### Project setup
 
-```bash
-swa start --api-location api --port 4281
+```
+npm install
+pushd api
+npm install
+popd
 ```
 
-タクシー予約一覧は `http://127.0.0.1:4281/taxireservationlist.html` からアクセスします。
+### 実行
+
+下記コマンドで、ローカル環境にて Backend API を含めた開発環境を実行できます。（ `swa-cli.config.json` から設定を読み込んで実行します。）
+
+```bash
+swa start
+```
+
+タクシー予約一覧は `http://127.0.0.1:4281/` からアクセスします。
 
 ### Vite's README
 
