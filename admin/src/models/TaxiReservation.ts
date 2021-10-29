@@ -1,7 +1,19 @@
 import { TaxiReservationResponse } from './TaxiReservationResponse'
 
-// const places = ["", "観光会館", "○○駅", "○○温泉", "○○カフェ"];
-// const reservation_status = ["", "受付", "手配中", "手配済み", "キャンセル済"];
+const placesToDisplay = ['', '観光会館', '○○駅', '○○温泉', '○○カフェ']
+const reservationStatusToDisplay = [
+  '',
+  '受付',
+  '手配中',
+  '手配済み',
+  'キャンセル済',
+]
+const reservationStatuses = {
+  accepted: 1,
+  allocating: 2,
+  allocated: 3,
+  canceled: 4,
+}
 
 export class TaxiReservation {
   _id: string
@@ -74,23 +86,37 @@ export class TaxiReservation {
     return this._updated
   }
 
+  get statuses() {
+    return reservationStatuses
+  }
+
   isRequested() {
-    return this._status == 1
+    return this._status == reservationStatuses['accepted']
   }
 
   isAllocating() {
-    return this._status == 2
+    return this._status == reservationStatuses['allocating']
   }
 
   isAllocated() {
-    return this._status == 3
+    return this._status == reservationStatuses['allocated']
   }
 
   isCanceled() {
-    return this._status == 4
+    return this._status == reservationStatuses['canceled']
   }
 
   updateStatus(status: number) {
     this._status = status
+  }
+
+  placeNameToDisplay(id: number | string) {
+    const placeId = typeof id == 'string' ? parseInt(id) : id
+    return placesToDisplay[placeId]
+  }
+
+  statusToDisplay(id: number | string) {
+    const statusId = typeof id == 'string' ? parseInt(id) : id
+    return reservationStatusToDisplay[statusId]
   }
 }
