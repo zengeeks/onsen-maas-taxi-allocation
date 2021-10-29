@@ -91,15 +91,21 @@ import liff from '@line/liff'
 import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { defineComponent, ref, onMounted, computed } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { TaxiReservation } from '../api/models/TaxiReservation'
 import { Message } from '../api/models/Message'
 
 export default defineComponent({
-  setup() {
+  props: {
+    liffDisplayName: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
     // form data
     const form = ref({
-      taxiUserName: '',
+      taxiUserName: props.liffDisplayName,
       taxiUserPhoneNumber: '',
       taxiNumberOfPassenger: '',
       taxiPassengers: '',
@@ -146,12 +152,6 @@ export default defineComponent({
       arrivalPlace: { required },
     }
     const v$ = useVuelidate(rules, form.value)
-
-    // プロフィール取得関数
-    const getProfile = async () => {
-      const profile = await liff.getProfile()
-      form.value.taxiUserName = profile.displayName // LINEの名前
-    }
 
     // 予約の関数
     const reserve = async () => {
@@ -203,16 +203,6 @@ export default defineComponent({
       // sendmessage の API を実行
       await axios.post('/api/sendmessage', message)
     }
-
-    // ページを開いた時に実行
-    onMounted(async () => {
-      await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
-      if (liff.isLoggedIn()) {
-        await getProfile()
-      } else {
-        liff.login()
-      }
-    })
 
     // return
     return {

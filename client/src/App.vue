@@ -1,6 +1,11 @@
 <template>
-  <div id="app" class="container">
-    <TaxiReserve />
+  <div class="container">
+    <TaxiReserve v-if="isLiffEnabled" :liff-display-name="liffDisplayName" />
+    <div v-if="!isLiffEnabled">
+      <div class="loading">
+        <h2>Loading...</h2>
+      </div>
+    </div>
     <footer class="pt-5 text-muted text-center text-small">
       <p class="mb-1">&copy; 2021 温泉MaaS</p>
       <ul class="list-inline">
@@ -19,9 +24,10 @@
 </template>
 
 <script lang="ts">
+import liff from '@line/liff'
 import TaxiReserve from './components/TaxiReserve.vue'
 import VConsole from 'vconsole'
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 
 export default defineComponent({
   name: 'App',
@@ -29,7 +35,25 @@ export default defineComponent({
     TaxiReserve,
   },
   setup() {
-    onMounted(() => {
+    const liffDisplayName = ref('')
+    const isLiffEnabled = ref(false)
+
+    // LIFF プロフィール取得
+    const getProfile = async () => {
+      const profile = await liff.getProfile()
+      liffDisplayName.value = profile.displayName // LINEの名前
+    }
+
+    onMounted(async () => {
+      // LIFF の初期化
+      await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
+      if (liff.isLoggedIn()) {
+        await getProfile()
+      } else {
+        liff.login()
+      }
+
+      // vConsole の初期化
       if (import.meta.env.VITE_APP_USE_VCONSOLE === 'true') {
         new VConsole({
           defaultPlugins: ['system', 'network', 'element', 'storage'],
@@ -43,7 +67,14 @@ export default defineComponent({
           },
         })
       }
+
+      isLiffEnabled.value = true
     })
+
+    return {
+      liffDisplayName,
+      isLiffEnabled,
+    }
   },
 })
 </script>
@@ -58,5 +89,12 @@ export default defineComponent({
 
 a {
   color: #42b983;
+}
+</style>
+
+<style scoped>
+.loading {
+  text-align: center;
+  margin-top: 50px;
 }
 </style>
