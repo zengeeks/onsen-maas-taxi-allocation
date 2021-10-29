@@ -19,11 +19,10 @@
       <div class="col">
         <label class="form-label" for="departurePlace">乗車場所</label>
         <select
-          v-model="form.selectedDeparturePlace"
+          v-model="form.departurePlace"
           class="form-select"
           name="departurePlace"
-          :class="{ 'is-invalid': v$.selectedDeparturePlace.$error }"
-          @change="getTicketNumber"
+          :class="{ 'is-invalid': v$.departurePlace.$error }"
         >
           <option v-for="place in places" :key="place.id" :value="place.id">
             {{ place.name }}
@@ -34,11 +33,10 @@
       <div class="col">
         <label class="form-label" for="arrivalPlace">降車場所</label>
         <select
-          v-model="form.selectedArrivalPlace"
+          v-model="form.arrivalPlace"
           class="form-select"
           name="arrivalPlace"
-          :class="{ 'is-invalid': v$.selectedArrivalPlace.$error }"
-          @change="getTicketNumber"
+          :class="{ 'is-invalid': v$.arrivalPlace.$error }"
         >
           <option v-for="place in places" :key="place.id" :value="place.id">
             {{ place.name }}
@@ -48,7 +46,7 @@
       </div>
       <div v-if="isTicketMessageWindow" class="col">
         <div class="alert alert-info">
-          必要なチケット枚数は {{ form.selectedTicketNumber }} 枚です
+          必要なチケット枚数は {{ numberOfTickets }} 枚です
         </div>
       </div>
       <div class="col">
@@ -119,9 +117,8 @@ export default defineComponent({
       taxiUserPhoneNumber: '',
       taxiNumberOfPassenger: '',
       taxiPassengers: '',
-      selectedDeparturePlace: '',
-      selectedArrivalPlace: '',
-      selectedTicketNumber: 0,
+      departurePlace: '',
+      arrivalPlace: '',
     })
 
     // constant
@@ -133,6 +130,7 @@ export default defineComponent({
       { number: 5 },
       { number: 6 },
     ] // 1->2, 1->3, 1->4, 2->3, 2->4, 3->4
+
     const places = [
       { id: '1', name: '観光会館' },
       { id: '2', name: '○○駅' },
@@ -142,17 +140,24 @@ export default defineComponent({
 
     // computed values
     const isTicketMessageWindow = computed(() => {
-      return (
-        form.value.selectedDeparturePlace && form.value.selectedArrivalPlace
-      )
+      return form.value.departurePlace && form.value.arrivalPlace
+    })
+
+    const numberOfTickets = computed(() => {
+      const idx1 = Number(form.value.departurePlace)
+      const idx2 = Number(form.value.arrivalPlace)
+      if (idx1 === idx2) {
+        return 0
+      }
+      return tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
     })
 
     // validation rules
     const rules = {
       taxiUserPhoneNumber: { required },
-      selectedDeparturePlace: { required },
-      selectedArrivalPlace: { required },
       taxiNumberOfPassenger: { required },
+      departurePlace: { required },
+      arrivalPlace: { required },
     }
     const v$ = useVuelidate(rules, form.value)
 
@@ -167,7 +172,7 @@ export default defineComponent({
       // バリデーション実行
       const isFormCorrect = await v$.value.$validate()
       if (!isFormCorrect) {
-        console.log('バリデーションエラー')
+        console.log('バリデーションエラー: ', form.value)
         return
       }
 
@@ -182,12 +187,12 @@ export default defineComponent({
       const taxiReservation: TaxiReservation = {
         userIdToken: liffUserIdToken,
         userName: form.value.taxiUserName,
-        departurePlace: form.value.selectedDeparturePlace,
-        arrivalPlace: form.value.selectedArrivalPlace,
+        departurePlace: form.value.departurePlace,
+        arrivalPlace: form.value.arrivalPlace,
         userPhoneNumber: form.value.taxiUserPhoneNumber,
         userNumberOfPassenger: Number(form.value.taxiNumberOfPassenger),
         userPassengers: form.value.taxiPassengers,
-        numberOfTickets: Number(form.value.selectedTicketNumber),
+        numberOfTickets: Number(numberOfTickets.value),
         reservationDatetime: new Date().toISOString(),
       }
 
@@ -213,30 +218,6 @@ export default defineComponent({
       await axios.post('/api/sendmessage', message)
     }
 
-    const getTicketNumber = () => {
-      let idx1 = Number(form.value.selectedDeparturePlace)
-      let idx2 = Number(form.value.selectedArrivalPlace)
-      if (idx1 === 0 || idx2 === 0) {
-        form.value.selectedTicketNumber = 0
-        return
-      }
-      if (idx1 > 4 || idx2 > 4) {
-        form.value.selectedTicketNumber = 0
-        return
-      }
-      if (idx1 === idx2) {
-        form.value.selectedTicketNumber = 0
-        return
-      }
-      if (idx1 > idx2) {
-        let tmpIdx = idx2
-        idx2 = idx1
-        idx1 = tmpIdx
-      }
-      form.value.selectedTicketNumber =
-        tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
-    }
-
     // ページを開いた時に実行
     onMounted(async () => {
       await liff.init({ liffId: import.meta.env.VITE_APP_LIFFID })
@@ -251,10 +232,10 @@ export default defineComponent({
     return {
       form,
       isTicketMessageWindow,
+      numberOfTickets,
       places,
       v$,
       reserve,
-      getTicketNumber,
     }
   },
 })
