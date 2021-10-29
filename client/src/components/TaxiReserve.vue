@@ -181,7 +181,7 @@ export default defineComponent({
       // taxireserve の API を実行
       const response: AxiosResponse<Message> = await axios.post(
         '/api/taxireserve',
-        JSON.stringify(taxiReservation),
+        taxiReservation,
       )
       await sendMessage({
         userId: response.data.userId,
@@ -197,7 +197,7 @@ export default defineComponent({
       }
 
       // sendmessage の API を実行
-      await axios.post('/api/sendmessage', JSON.stringify(message))
+      await axios.post('/api/sendmessage', message)
     }
 
     const getTicketNumber = () => {
