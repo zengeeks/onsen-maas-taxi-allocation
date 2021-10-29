@@ -5,11 +5,13 @@ defineProps<{ reservationResponse: TaxiReservationResponse }>()
 </script>
 
 <script lang="ts">
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import { defineComponent } from '@vue/runtime-core'
 import { TaxiReservation } from '../models/TaxiReservation'
 import { TaxiChangeStatusPostRequestBody } from '../models/TaxiChangeStatusPostRequestBody'
+import { TaxiChangeStatusResponse } from '../models/TaxiChangeStatusResponse'
+import { SendMessagePostRequestBody } from '../models/SendMessagePostRequestBody'
 
 export default defineComponent({
   data() {
@@ -36,19 +38,31 @@ export default defineComponent({
         return
       }
 
-      const response = await axios.post<TaxiChangeStatusPostRequestBody>(
-        '/api/taxichangestatus',
-        {
-          id: this.reservation.id,
-          userId: this.reservation.userId,
-          reservationStatus: status,
-        },
-      )
-      if (response.status == 200) {
-        this.reservation.updateStatus(status)
+      const response: AxiosResponse<TaxiChangeStatusResponse> =
+        await axios.post<TaxiChangeStatusPostRequestBody>(
+          '/api/taxichangestatus',
+          {
+            id: this.reservation.id,
+            userId: this.reservation.userId,
+            reservationStatus: status,
+          },
+        )
 
-        // TODO: ユーザーにステータス変更を通知する
-        await this.sendLinePushMessage()
+      if (response.status == 200) {
+        this.reservation.updateStatus(response.data.reservationStatus)
+
+        // ユーザーにステータス変更を通知する
+        if (this.reservation.isAllocated()) {
+          await this.sendLinePushMessage(
+            response.data.userId,
+            'タクシー配車を行いました。しばらくお待ちください。',
+          )
+        } else if (this.reservation.isCanceled()) {
+          await this.sendLinePushMessage(
+            response.data.userId,
+            '申し訳ありません。タクシーを手配できませんでした。',
+          )
+        }
       }
     },
 
@@ -74,8 +88,18 @@ export default defineComponent({
     },
 
     // TODO: ステータス更新をユーザーへ通知する
-    async sendLinePushMessage() {
-      console.log('TODO: send a message to the user')
+    async sendLinePushMessage(userId: string, message: string) {
+      const response = await axios.post<SendMessagePostRequestBody>(
+        '/api/sendmessage',
+        {
+          userId: userId,
+          messageText: message,
+        },
+      )
+
+      if (response.status == 200) {
+        console.log('Succeed to notify the user')
+      }
     },
 
     // 日時の書式文字列を返す
