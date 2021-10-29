@@ -4,12 +4,12 @@
     <form class="row row-cols-1 g-3" novalidate>
       <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">名前</span>
-        <input v-model="taxiUserName" type="text" class="form-control" />
+        <input v-model="form.taxiUserName" type="text" class="form-control" />
       </div>
       <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">電話番号</span>
         <input
-          v-model="taxiUserPhoneNumber"
+          v-model="form.taxiUserPhoneNumber"
           type="text"
           class="form-control"
           :class="{ 'is-invalid': v$.taxiUserPhoneNumber.$error }"
@@ -19,7 +19,7 @@
       <div class="col">
         <label class="form-label" for="departurePlace">乗車場所</label>
         <select
-          v-model="selectedDeparturePlace"
+          v-model="form.selectedDeparturePlace"
           class="form-select"
           name="departurePlace"
           :class="{ 'is-invalid': v$.selectedDeparturePlace.$error }"
@@ -34,7 +34,7 @@
       <div class="col">
         <label class="form-label" for="arrivalPlace">降車場所</label>
         <select
-          v-model="selectedArrivalPlace"
+          v-model="form.selectedArrivalPlace"
           class="form-select"
           name="arrivalPlace"
           :class="{ 'is-invalid': v$.selectedArrivalPlace.$error }"
@@ -46,15 +46,15 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <div v-if="isTicketMessageWindow" class="col">
+      <div v-if="form.isTicketMessageWindow" class="col">
         <div class="alert alert-info">
-          必要なチケット枚数は {{ selectedTicketNumber }} 枚です
+          必要なチケット枚数は {{ form.selectedTicketNumber }} 枚です
         </div>
       </div>
       <div class="col">
         <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
         <select
-          v-model="taxiNumberOfPassenger"
+          v-model="form.taxiNumberOfPassenger"
           class="form-select"
           :class="{ 'is-invalid': v$.taxiNumberOfPassenger.$error }"
         >
@@ -68,7 +68,7 @@
       <div class="col input-group">
         <span id="basic-addon1" class="input-group-text">同乗者</span>
         <input
-          v-model="taxiPassengers"
+          v-model="form.taxiPassengers"
           type="text"
           class="form-control"
           aria-label="Passengers"
@@ -113,15 +113,17 @@ import { Message } from '../models/Message'
 
 export default defineComponent({
   setup() {
-    // reactive data
-    const taxiUserName = ref('')
-    const taxiUserPhoneNumber = ref('')
-    const taxiNumberOfPassenger = ref('')
-    const taxiPassengers = ref('')
-    const isTicketMessageWindow = ref(false)
-    const selectedDeparturePlace = ref('')
-    const selectedArrivalPlace = ref('')
-    const selectedTicketNumber = ref(0)
+    // form data
+    const form = ref({
+      taxiUserName: '',
+      taxiUserPhoneNumber: '',
+      taxiNumberOfPassenger: '',
+      taxiPassengers: '',
+      isTicketMessageWindow: false,
+      selectedDeparturePlace: '',
+      selectedArrivalPlace: '',
+      selectedTicketNumber: 0,
+    })
 
     // constant
     const tickets = [
@@ -146,17 +148,12 @@ export default defineComponent({
       selectedArrivalPlace: { required },
       taxiNumberOfPassenger: { required },
     }
-    const v$ = useVuelidate(rules, {
-      taxiUserPhoneNumber,
-      selectedDeparturePlace,
-      selectedArrivalPlace,
-      taxiNumberOfPassenger,
-    })
+    const v$ = useVuelidate(rules, form.value)
 
     // プロフィール取得関数
     const getProfile = async () => {
       const profile = await liff.getProfile()
-      taxiUserName.value = profile.displayName // LINEの名前
+      form.value.taxiUserName = profile.displayName // LINEの名前
     }
 
     // 予約の関数
@@ -171,13 +168,13 @@ export default defineComponent({
       // payload
       const taxiReservation: TaxiReservation = {
         userIdToken: liff.getIDToken(),
-        userName: taxiUserName.value,
-        departurePlace: selectedDeparturePlace.value,
-        arrivalPlace: selectedArrivalPlace.value,
-        userPhoneNumber: taxiUserPhoneNumber.value,
-        userNumberOfPassenger: Number(taxiNumberOfPassenger.value),
-        userPassengers: taxiPassengers.value,
-        numberOfTickets: Number(selectedTicketNumber.value),
+        userName: form.value.taxiUserName,
+        departurePlace: form.value.selectedDeparturePlace,
+        arrivalPlace: form.value.selectedArrivalPlace,
+        userPhoneNumber: form.value.taxiUserPhoneNumber,
+        userNumberOfPassenger: Number(form.value.taxiNumberOfPassenger),
+        userPassengers: form.value.taxiPassengers,
+        numberOfTickets: Number(form.value.selectedTicketNumber),
         reservationDatetime: new Date().toISOString(),
       }
 
@@ -204,18 +201,18 @@ export default defineComponent({
     }
 
     const getTicketNumber = () => {
-      let idx1 = Number(selectedDeparturePlace.value)
-      let idx2 = Number(selectedArrivalPlace.value)
+      let idx1 = Number(form.value.selectedDeparturePlace)
+      let idx2 = Number(form.value.selectedArrivalPlace)
       if (idx1 === 0 || idx2 === 0) {
-        selectedTicketNumber.value = 0
+        form.value.selectedTicketNumber = 0
         return
       }
       if (idx1 > 4 || idx2 > 4) {
-        selectedTicketNumber.value = 0
+        form.value.selectedTicketNumber = 0
         return
       }
       if (idx1 === idx2) {
-        selectedTicketNumber.value = 0
+        form.value.selectedTicketNumber = 0
         return
       }
       if (idx1 > idx2) {
@@ -223,9 +220,9 @@ export default defineComponent({
         idx2 = idx1
         idx1 = tmpIdx
       }
-      selectedTicketNumber.value =
+      form.value.selectedTicketNumber =
         tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
-      isTicketMessageWindow.value = true
+      form.value.isTicketMessageWindow = true
     }
 
     // ページを開いた時に実行
@@ -240,15 +237,8 @@ export default defineComponent({
 
     // return
     return {
-      taxiUserName,
-      taxiUserPhoneNumber,
-      selectedDeparturePlace,
+      form,
       places,
-      selectedArrivalPlace,
-      isTicketMessageWindow,
-      selectedTicketNumber,
-      taxiNumberOfPassenger,
-      taxiPassengers,
       v$,
       reserve,
       getTicketNumber,
