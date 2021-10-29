@@ -46,7 +46,7 @@
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
-      <div v-if="form.isTicketMessageWindow" class="col">
+      <div v-if="isTicketMessageWindow" class="col">
         <div class="alert alert-info">
           必要なチケット枚数は {{ form.selectedTicketNumber }} 枚です
         </div>
@@ -107,7 +107,7 @@ import liff from '@line/liff'
 import axios, { AxiosResponse } from 'axios'
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { TaxiReservation } from '../api/models/TaxiReservation'
 import { Message } from '../api/models/Message'
 
@@ -119,7 +119,6 @@ export default defineComponent({
       taxiUserPhoneNumber: '',
       taxiNumberOfPassenger: '',
       taxiPassengers: '',
-      isTicketMessageWindow: false,
       selectedDeparturePlace: '',
       selectedArrivalPlace: '',
       selectedTicketNumber: 0,
@@ -140,6 +139,13 @@ export default defineComponent({
       { id: '3', name: '○○温泉' },
       { id: '4', name: '○○カフェ' },
     ]
+
+    // computed values
+    const isTicketMessageWindow = computed(() => {
+      return (
+        form.value.selectedDeparturePlace && form.value.selectedArrivalPlace
+      )
+    })
 
     // validation rules
     const rules = {
@@ -229,7 +235,6 @@ export default defineComponent({
       }
       form.value.selectedTicketNumber =
         tickets[(idx1 - 1) * 4 - (idx1 * (idx1 + 1)) / 2 + idx2 - 1].number
-      form.value.isTicketMessageWindow = true
     }
 
     // ページを開いた時に実行
@@ -245,6 +250,7 @@ export default defineComponent({
     // return
     return {
       form,
+      isTicketMessageWindow,
       places,
       v$,
       reserve,
