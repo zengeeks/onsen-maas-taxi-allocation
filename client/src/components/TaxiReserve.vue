@@ -165,9 +165,16 @@ export default defineComponent({
         return
       }
 
+      // LIFF の ID トークンを取得
+      const liffUserIdToken = liff.getIDToken()
+      if (!liffUserIdToken) {
+        console.log('IDトークン取得失敗')
+        return
+      }
+
       // payload
       const taxiReservation: TaxiReservation = {
-        userIdToken: liff.getIDToken(),
+        userIdToken: liffUserIdToken,
         userName: form.value.taxiUserName,
         departurePlace: form.value.selectedDeparturePlace,
         arrivalPlace: form.value.selectedArrivalPlace,

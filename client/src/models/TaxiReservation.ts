@@ -1,5 +1,5 @@
 export interface TaxiReservation {
-  userIdToken: string | null
+  userIdToken: string
   userName: string
   departurePlace: string
   arrivalPlace: string
