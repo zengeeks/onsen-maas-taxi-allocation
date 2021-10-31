@@ -1,7 +1,14 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
+<script lang="ts">
 import TaxiReservationList from './components/TaxiReservationList.vue'
+
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    TaxiReservationList,
+  },
+})
 </script>
 
 <template>

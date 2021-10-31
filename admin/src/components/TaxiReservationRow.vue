@@ -1,19 +1,22 @@
-<script setup lang="ts">
-import { TaxiReservationResponse } from '../models/TaxiReservationResponse'
-
-defineProps<{ reservationResponse: TaxiReservationResponse }>()
-</script>
-
 <script lang="ts">
+import { PropType } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import { defineComponent } from '@vue/runtime-core'
 import { TaxiReservation } from '../models/TaxiReservation'
+import { TaxiReservationResponse } from '../models/TaxiReservationResponse'
 import { TaxiChangeStatusPostRequestBody } from '../models/TaxiChangeStatusPostRequestBody'
 import { TaxiChangeStatusResponse } from '../models/TaxiChangeStatusResponse'
 import { SendMessagePostRequestBody } from '../models/SendMessagePostRequestBody'
 
 export default defineComponent({
+  props: {
+    reservationResponse: {
+      type: Object as PropType<TaxiReservationResponse>,
+      required: true,
+    },
+  },
+
   data() {
     return {
       reservation: null,
