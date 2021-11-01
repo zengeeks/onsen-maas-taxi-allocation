@@ -38,7 +38,7 @@ export default defineComponent({
       query.append('toDate', toDate)
 
       const response: AxiosResponse<TaxiReservationResponse[]> =
-        await axios.get('/api/taxireservelist?' + query.toString())
+        await axios.get('/api/taxireservelist', { params: { fromDate, toDate } })
 
       if (response.status == 200 && Array.isArray(response.data)) {
         this.taxiReservationResponseList = response.data
