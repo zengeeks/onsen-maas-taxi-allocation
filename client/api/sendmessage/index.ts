@@ -1,7 +1,7 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions'
+import { AzureFunction} from '@azure/functions'
 import fetch from 'node-fetch';
 
-const sendmessage: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const sendmessage: AzureFunction = async function (context, req): Promise<void> {
 
     // メッセージ送信用オブジェクトを作成
     const message = {
