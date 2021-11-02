@@ -1,13 +1,21 @@
 <script lang="ts">
-import { PropType } from 'vue'
+import { defineComponent, computed, PropType, ref, watch } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
-import { defineComponent } from '@vue/runtime-core'
 import { TaxiReservation } from '../models/TaxiReservation'
 import { TaxiReservationResponse } from '../models/TaxiReservationResponse'
 import { TaxiChangeStatusPostRequestBody } from '../models/TaxiChangeStatusPostRequestBody'
 import { TaxiChangeStatusResponse } from '../models/TaxiChangeStatusResponse'
 import { SendMessagePostRequestBody } from '../models/SendMessagePostRequestBody'
+import {
+  isStatusRequested,
+  isStatusAllocating,
+  isStatusAllocated,
+  isStatusCanceled,
+  placeNameToDisplay,
+  reservationStatuses,
+  statusToDisplay,
+} from '../helpers/taxiReservationUtils'
 
 export default defineComponent({
   props: {
@@ -17,50 +25,75 @@ export default defineComponent({
     },
   },
 
-  data() {
+  setup(props) {
+    // プロパティの更新を反映する予約情報
+    const reservation = computed((): TaxiReservation => {
+      return {
+        id: props.reservationResponse.id,
+        userId: props.reservationResponse.userId,
+        userName: props.reservationResponse.userName,
+        departurePlaceText: placeNameToDisplay(
+          parseInt(props.reservationResponse.departurePlace),
+        ),
+        arrivalPlaceText: placeNameToDisplay(
+          parseInt(props.reservationResponse.arrivalPlace),
+        ),
+        userPhoneNumber: props.reservationResponse.userPhoneNumber,
+        userNumberOfPassenger: props.reservationResponse.userNumberOfPassenger,
+        numberOfTickets: props.reservationResponse.numberOfTickets,
+        reservationDatetimeText: dayjs(
+          props.reservationResponse.reservationDatetime,
+        ).format('YYYY年MM月DD日 hh時mm分'),
+        statusId: props.reservationResponse.reservationStatus,
+        latestUpdateDatetimeText: dayjs(
+          props.reservationResponse.latestUpdateDatetime,
+        ).format('YYYY年MM月DD日 hh時mm分'),
+      }
+    })
+
+    // ステータスの状態
+    const reservationStatusId = ref<number>(
+      props.reservationResponse.reservationStatus,
+    )
+
+    // 予約情報が更新された場合、ステータスを更新する
+    const watchReservation = (reservation: TaxiReservation) => {
+      reservationStatusId.value = reservation.statusId
+    }
+
+    // 予約情報の更新を監視する
+    watch(reservation, watchReservation)
+
     return {
-      reservation: null,
-      status: 0,
-    } as { reservation: null | TaxiReservation; status: number }
-  },
-
-  watch: {
-    reservationResponse: function (val) {
-      this.reservation = new TaxiReservation(val)
-    },
-
-    status: async function (status) {
-      await this.updateReservationStatus(status)
-    },
+      reservation,
+      reservationStatusId,
+      statusToDisplay,
+    }
   },
 
   methods: {
     // ステータスを更新する
-    async updateReservationStatus(status: number) {
-      if (!this.reservation) {
-        return
-      }
-
+    async updateReservationStatus(statusId: number) {
       const response: AxiosResponse<TaxiChangeStatusResponse> =
         await axios.post<TaxiChangeStatusPostRequestBody>(
           '/api/taxichangestatus',
           {
             id: this.reservation.id,
             userId: this.reservation.userId,
-            reservationStatus: status,
+            reservationStatus: statusId,
           },
         )
 
       if (response.status == 200) {
-        this.reservation.updateStatus(response.data.reservationStatus)
+        this.reservationStatusId = response.data.reservationStatus
 
         // ユーザーにステータス変更を通知する
-        if (this.reservation.isAllocated()) {
+        if (isStatusAllocated(response.data.reservationStatus)) {
           await this.sendLinePushMessage(
             response.data.userId,
             'タクシー配車を行いました。しばらくお待ちください。',
           )
-        } else if (this.reservation.isCanceled()) {
+        } else if (isStatusCanceled(response.data.reservationStatus)) {
           await this.sendLinePushMessage(
             response.data.userId,
             '申し訳ありません。タクシーを手配できませんでした。',
@@ -71,26 +104,20 @@ export default defineComponent({
 
     // 手配を開始する
     async startAllocation() {
-      if (this.reservation) {
-        this.status = this.reservation.statuses['allocating']
-      }
+      await this.updateReservationStatus(reservationStatuses['allocating'])
     },
 
     // 手配を完了する
     async completeAllocation() {
-      if (this.reservation) {
-        this.status = this.reservation.statuses['allocated']
-      }
+      await this.updateReservationStatus(reservationStatuses['allocated'])
     },
 
     // 予約をキャンセルする
     async cancelAllocation() {
-      if (this.reservation) {
-        this.status = this.reservation.statuses['canceled']
-      }
+      await this.updateReservationStatus(reservationStatuses['canceled'])
     },
 
-    // TODO: ステータス更新をユーザーへ通知する
+    // ユーザーへメッセージを通知する
     async sendLinePushMessage(userId: string, message: string) {
       const response = await axios.post<SendMessagePostRequestBody>(
         '/api/sendmessage',
@@ -105,9 +132,28 @@ export default defineComponent({
       }
     },
 
-    // 日時の書式文字列を返す
-    getDateFormatedText(date: string | Date, format: string) {
-      return dayjs(date).format(format)
+    // 手配開始ボタンの無効化判定
+    isDisabledStartAllocationButton(): boolean {
+      return (
+        !isStatusRequested(this.reservationStatusId) ||
+        isStatusCanceled(this.reservationStatusId)
+      )
+    },
+
+    // 手配完了ボタンの無効化判定
+    isDisabledCompleteAllocationButton(): boolean {
+      return (
+        !isStatusAllocating(this.reservationStatusId) ||
+        isStatusCanceled(this.reservationStatusId)
+      )
+    },
+
+    // キャンセルボタンの無効判定
+    isDisabledCancelButton(): boolean {
+      return (
+        isStatusAllocated(this.reservationStatusId) ||
+        isStatusCanceled(this.reservationStatusId)
+      )
     },
   },
 })
@@ -116,26 +162,19 @@ export default defineComponent({
 <template>
   <tr v-if="reservation">
     <td class="font-monospace">{{ reservation.id }}</td>
-    <td>
-      {{
-        getDateFormatedText(
-          reservation.reservationDatetime,
-          'YYYY年MM月DD日 hh時mm分',
-        )
-      }}
-    </td>
+    <td>{{ reservation.reservationDatetimeText }}</td>
     <td>{{ reservation.userName }}</td>
     <td>{{ reservation.userPhoneNumber }}</td>
-    <td>{{ reservation.placeNameToDisplay(reservation.departurePlace) }}</td>
-    <td>{{ reservation.placeNameToDisplay(reservation.arrivalPlace) }}</td>
+    <td>{{ reservation.departurePlaceText }}</td>
+    <td>{{ reservation.arrivalPlaceText }}</td>
     <td>{{ reservation.numberOfTickets }}</td>
     <td>{{ reservation.userNumberOfPassenger }}</td>
-    <td>{{ reservation.statusToDisplay(reservation.status) }}</td>
+    <td>{{ statusToDisplay(reservationStatusId) }}</td>
     <td>
       <button
         type="button"
         class="btn btn-primary"
-        :disabled="!reservation.isRequested() || reservation.isCanceled()"
+        :disabled="isDisabledStartAllocationButton()"
         @click="startAllocation"
       >
         手配開始</button
@@ -143,7 +182,7 @@ export default defineComponent({
       <button
         type="button"
         class="btn btn-primary"
-        :disabled="!reservation.isAllocating() || reservation.isCanceled()"
+        :disabled="isDisabledCompleteAllocationButton()"
         @click="completeAllocation"
       >
         手配完了</button
@@ -151,14 +190,14 @@ export default defineComponent({
       <button
         type="button"
         class="btn btn-secondary"
-        :disabled="reservation.isCanceled()"
+        :disabled="isDisabledCancelButton()"
         @click="cancelAllocation"
       >
         キャンセル</button
       ><br />
     </td>
     <td>
-      {{ getDateFormatedText(reservation.updated, 'YYYY年MM月DD日 hh時mm分') }}
+      {{ reservation.latestUpdateDatetimeText }}
     </td>
   </tr>
 </template>
