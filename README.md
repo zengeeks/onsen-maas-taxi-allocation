@@ -1,14 +1,6 @@
 # 【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】
 
-このリポジトリは、[【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】](https://linedevelopercommunity.connpass.com/event/220376/) で行うハンズオンのサンプルコードとセルフペースドハンズオンの資料を含んでいます。
-
-## セルフペースドハンズオン
-
-セルフペースドハンズオンを実施される方は、 [docs/self-paced-handson](./docs/self-paced-handson) へお進みください。
-
-### ご質問、トラブルシューティングの受付
-
-ご質問やトラブルシューティングは、このリポジトリの [GitHub Discussions](https://github.com/zengeeks/onsen-maas-taxi-allocation/discussions) にて受け付けます。
+このリポジトリは、[【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】](https://linedevelopercommunity.connpass.com/event/220376/) で行ったハンズオンをベースに、より実用に即した改良を行ったサンプルコードを格納しています。
 
 ## サンプルコード
 
@@ -18,9 +10,9 @@
 
 ```bash
 ├── .devcontainer       ... Dev container 構成
-├── .vscode             ... Visual Studio Code 用プロジェクト設定
 ├── client              ... ユーザークライアントのコード
 ├── admin               ... 管理システムのコード
 ├── docs                ... 資料などドキュメンテーション
+├── dev.code-workspace  ... Visual Studio Code のワークスペース設定ファイル
 └── README.md           ... このファイル
 ```
