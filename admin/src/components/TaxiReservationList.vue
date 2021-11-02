@@ -18,18 +18,18 @@ export default defineComponent({
   },
 
   created: function () {
-    this.updateTaxiReservationList()
+    this.getTaxiReservationList()
     this.refresh()
   },
 
   methods: {
     // 継続的な情報の更新を行う
     refresh() {
-      setInterval(this.updateTaxiReservationList, 10000)
+      setInterval(this.getTaxiReservationList, 10000)
     },
 
     // タクシー予約一覧を取得する
-    async updateTaxiReservationList() {
+    async getTaxiReservationList() {
       const now = new Date()
       const fromDate = now.toISOString()
       const toDate = dayjs(now).hour(23).minute(59).second(59).toISOString()
@@ -38,11 +38,12 @@ export default defineComponent({
       query.append('toDate', toDate)
 
       const response: AxiosResponse<TaxiReservationResponse[]> =
-        await axios.get('/api/taxireservelist', { params: { fromDate, toDate } })
+        await axios.get('/api/taxireservelist', {
+          params: { fromDate, toDate },
+        })
 
       if (response.status == 200 && Array.isArray(response.data)) {
         this.taxiReservationResponseList = response.data
-        console.log('updated')
       }
     },
   },
