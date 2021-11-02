@@ -13,7 +13,7 @@
     "prestart": "npm run build && func extensions install",
     "start:host": "func start",
     "start": "npm-run-all --parallel start:host watch",
-	"lint": "prettier --check . && eslint --ext \".ts,.js\" --ignore-path .gitignore .",
+    "lint": "prettier --check . && eslint --ext \".ts,.js\" --ignore-path .gitignore .",
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
