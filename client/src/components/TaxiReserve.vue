@@ -24,7 +24,9 @@
           name="departurePlace"
           :class="{ 'is-invalid': v$.departurePlace.$error }"
         >
-          <option v-for="place in places" :key="place.id" :value="place.id">{{ place.name }}</option>
+          <option v-for="place in places" :key="place.id" :value="place.id">
+            {{ place.name }}
+          </option>
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
@@ -36,12 +38,16 @@
           name="arrivalPlace"
           :class="{ 'is-invalid': v$.arrivalPlace.$error }"
         >
-          <option v-for="place in places" :key="place.id" :value="place.id">{{ place.name }}</option>
+          <option v-for="place in places" :key="place.id" :value="place.id">
+            {{ place.name }}
+          </option>
         </select>
         <div class="invalid-feedback">選択してください</div>
       </div>
       <div v-if="isTicketMessageWindow" class="col">
-        <div class="alert alert-info">必要なチケット枚数は {{ numberOfTickets }} 枚です</div>
+        <div class="alert alert-info">
+          必要なチケット枚数は {{ numberOfTickets }} 枚です
+        </div>
       </div>
       <div class="col">
         <label for="taxiDeparturePlace" class="form-label">乗車人数</label>
@@ -68,7 +74,13 @@
         />
       </div>
       <div class="col input-group">
-        <button type="button" class="w-100 btn btn-primary btn-lg" @click="reserve">予約</button>
+        <button
+          type="button"
+          class="w-100 btn btn-primary btn-lg"
+          @click="reserve"
+        >
+          予約
+        </button>
       </div>
     </form>
   </div>
