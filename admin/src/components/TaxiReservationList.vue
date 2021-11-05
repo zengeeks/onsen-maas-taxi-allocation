@@ -1,41 +1,23 @@
 <script lang="ts">
-import { defineComponent } from '@vue/runtime-core'
+import { defineComponent, ref } from 'vue'
 import axios, { AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import TaxiReservationRow from './TaxiReservationRow.vue'
 import { TaxiReservationResponse } from '../models/TaxiReservationResponse'
-import { TaxiReservationResponseList } from '../models/TaxiReservationResponseList'
 
 export default defineComponent({
   components: {
     TaxiReservationRow,
   },
 
-  data() {
-    return {
-      taxiReservationResponseList: [],
-    } as TaxiReservationResponseList
-  },
-
-  created: function () {
-    this.getTaxiReservationList()
-    this.refresh()
-  },
-
-  methods: {
-    // 継続的な情報の更新を行う
-    refresh() {
-      setInterval(this.getTaxiReservationList, 10000)
-    },
+  setup() {
+    const taxiReservationResponseList = ref<TaxiReservationResponse[]>([])
 
     // タクシー予約一覧を取得する
-    async getTaxiReservationList() {
+    const getTaxiReservationList = async () => {
       const now = new Date()
       const fromDate = now.toISOString()
       const toDate = dayjs(now).hour(23).minute(59).second(59).toISOString()
-      let query = new URLSearchParams()
-      query.append('fromDate', fromDate)
-      query.append('toDate', toDate)
 
       const response: AxiosResponse<TaxiReservationResponse[]> =
         await axios.get('/api/taxireservelist', {
@@ -43,9 +25,25 @@ export default defineComponent({
         })
 
       if (response.status == 200 && Array.isArray(response.data)) {
-        this.taxiReservationResponseList = response.data
+        taxiReservationResponseList.value = response.data
       }
-    },
+    }
+
+    // 継続的な情報の更新を行う
+    const refresh = () => {
+      setInterval(getTaxiReservationList, 10000)
+    }
+
+    return {
+      taxiReservationResponseList,
+      getTaxiReservationList,
+      refresh,
+    }
+  },
+
+  created: function () {
+    this.getTaxiReservationList()
+    this.refresh()
   },
 })
 </script>

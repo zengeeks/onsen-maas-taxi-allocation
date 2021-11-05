@@ -15,7 +15,7 @@ import {
   placeNameToDisplay,
   reservationStatuses,
   statusToDisplay,
-} from '../helpers/taxiReservationUtils'
+} from '../helpers/taxiReservationHelper'
 
 export default defineComponent({
   props: {
@@ -64,61 +64,8 @@ export default defineComponent({
     // 予約情報の更新を監視する
     watch(reservation, watchReservation)
 
-    return {
-      reservation,
-      reservationStatusId,
-      statusToDisplay,
-    }
-  },
-
-  methods: {
-    // ステータスを更新する
-    async updateReservationStatus(statusId: number) {
-      const response: AxiosResponse<TaxiChangeStatusResponse> =
-        await axios.post<TaxiChangeStatusPostRequestBody>(
-          '/api/taxichangestatus',
-          {
-            id: this.reservation.id,
-            userId: this.reservation.userId,
-            reservationStatus: statusId,
-          },
-        )
-
-      if (response.status == 200) {
-        this.reservationStatusId = response.data.reservationStatus
-
-        // ユーザーにステータス変更を通知する
-        if (isStatusAllocated(response.data.reservationStatus)) {
-          await this.sendLinePushMessage(
-            response.data.userId,
-            'タクシー配車を行いました。しばらくお待ちください。',
-          )
-        } else if (isStatusCanceled(response.data.reservationStatus)) {
-          await this.sendLinePushMessage(
-            response.data.userId,
-            '申し訳ありません。タクシーを手配できませんでした。',
-          )
-        }
-      }
-    },
-
-    // 手配を開始する
-    async startAllocation() {
-      await this.updateReservationStatus(reservationStatuses['allocating'])
-    },
-
-    // 手配を完了する
-    async completeAllocation() {
-      await this.updateReservationStatus(reservationStatuses['allocated'])
-    },
-
-    // 予約をキャンセルする
-    async cancelAllocation() {
-      await this.updateReservationStatus(reservationStatuses['canceled'])
-    },
-
     // ユーザーへメッセージを通知する
-    async sendLinePushMessage(userId: string, message: string) {
+    const sendLinePushMessage = async (userId: string, message: string) => {
       const response = await axios.post<SendMessagePostRequestBody>(
         '/api/sendmessage',
         {
@@ -130,8 +77,64 @@ export default defineComponent({
       if (response.status == 200) {
         console.log('Succeed to notify the user')
       }
-    },
+    }
 
+    // ステータスを更新する
+    const updateReservationStatus = async (statusId: number) => {
+      const response: AxiosResponse<TaxiChangeStatusResponse> =
+        await axios.post<TaxiChangeStatusPostRequestBody>(
+          '/api/taxichangestatus',
+          {
+            id: reservation.value.id,
+            userId: reservation.value.userId,
+            reservationStatus: statusId,
+          },
+        )
+
+      if (response.status == 200) {
+        reservationStatusId.value = response.data.reservationStatus
+
+        // ユーザーにステータス変更を通知する
+        if (isStatusAllocated(response.data.reservationStatus)) {
+          await sendLinePushMessage(
+            response.data.userId,
+            'タクシー配車を行いました。しばらくお待ちください。',
+          )
+        } else if (isStatusCanceled(response.data.reservationStatus)) {
+          await sendLinePushMessage(
+            response.data.userId,
+            '申し訳ありません。タクシーを手配できませんでした。',
+          )
+        }
+      }
+    }
+
+    // 手配を開始する
+    const startAllocation = async () => {
+      await updateReservationStatus(reservationStatuses['allocating'])
+    }
+
+    // 手配を完了する
+    const completeAllocation = async () => {
+      await updateReservationStatus(reservationStatuses['allocated'])
+    }
+
+    // 予約をキャンセルする
+    const cancelAllocation = async () => {
+      await updateReservationStatus(reservationStatuses['canceled'])
+    }
+
+    return {
+      reservation,
+      reservationStatusId,
+      statusToDisplay,
+      startAllocation,
+      completeAllocation,
+      cancelAllocation,
+    }
+  },
+
+  methods: {
     // 手配開始ボタンの無効化判定
     isDisabledStartAllocationButton(): boolean {
       return (
