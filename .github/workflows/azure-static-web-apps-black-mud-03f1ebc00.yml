@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Update npm version to 7.x
+        run: npm install --unsafe-perm true --global npm@~7
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
