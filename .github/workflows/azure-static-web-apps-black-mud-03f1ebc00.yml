@@ -45,6 +45,9 @@ jobs:
           output_location: ""
           skip_app_build: true
           ###### End of Repository/Build Configurations ######
+        env:
+          VITE_APP_LIFFID: ${{ secrets.LINE_LIFFID }}
+          VITE_APP_USE_VCONSOLE: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
