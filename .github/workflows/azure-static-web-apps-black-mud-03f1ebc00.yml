@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
+      - name: Upgrade npm version to 7.x
+        run: npm install --global npm@~7
       - name: Restore packages
         run: npm install
       - name: Build
