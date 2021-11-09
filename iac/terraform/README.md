@@ -1,13 +1,17 @@
 ## 環境準備
 
-この Terraform コードで Backend に Azure (Blob storage) を指定したい場合は、 `backend_override.tf.example` を参考に、`backend_override.tf` を配置しておくと、切替えが容易です。
+この Terraform コードで Backend に Azure (Blob storage) を指定したい場合は、 `backend_override.tf.example` を参考に、`backend_override.tf` を配置すると、切替えが容易です。`*backend_override.tf` によるオーバーライドについては後述尾行をご参考ください。
 
 - [Azure storage account](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-account-overview) を作成し、`tfstate` の名前で Blob コンテナを作成する
-- `backend.hcl.example` を `backend.hcl` としてコピーし、 `resource_group_name` と `storage_account_name` の値を指定する
+- `backend_override.tf.example` を `backend_override.tf` としてコピーし、 `resource_group_name` と `storage_account_name` の値を指定する
 
 上記の準備ができたら、下記を実行して Terraform プロジェクトの初期化を行います。
 
 ```bash
+# Azure のサブスクリプションにログインする
+az login
+
+# Terraform プロジェクトの初期化を行う
 terraform init
 ```
 
@@ -45,33 +49,21 @@ LINE_MESSAGING_API_CHANNEL_ID="<LINE Messaging Channel ID>"
 LINE_MESSAGING_API_CHANNEL_SECRET="<LINE Messaging Channel secret>"
 ```
 
-~~つぎに、GitHub Actions を連携してコードをデプロイします。~~
+ワークフローファイルは既にリポジトリに格納しているので、下記のシークレットを環境に合わせて設定しておきます。
 
-```bash
-az staticwebapp reconnect \
-  --resource-group ${RESOURCE_GROUP_NAME} \
-  --name ${STAPP_NAME_CLIENT} \
-  --source ${REPOSITORY_URL} \
-  --branch ${REPOSITORY_BRANCH} \
-  --login-with-github
-```
+| シークレット名 | 値（説明） |
+|----|----|
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_BLACK_MUD_03F1EBC00` | デプロイ先の Static Web App の Deployment token を指定する |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する |
 
 Azure Static Web App の app settings を反映します。
 
 ```bash
-az staticwebapp appsettings set \
-  --resource-group ${RESOURCE_GROUP_NAME} \
-  --name ${STAPP_NAME_CLIENT} \
-  --setting-names \
-    LINE_LOGIN_CHANNEL_ID="${LINE_LOGIN_CHANNEL_ID}" \
-    LINE_MESSAGING_API_CHANNEL_ID="${LINE_MESSAGING_API_CHANNEL_ID}" \
-    LINE_MESSAGING_API_CHANNEL_SECRET="${LINE_MESSAGING_API_CHANNEL_SECRET}" \
-    COSMOS_CONNECTION="${COSMOS_CONNECTION}"
+az rest --method put --headers "Content-Type=application/json" --uri "<Static Web apps resource ID (client)>/config/functionappsettings?api-version=2021-02-01" --body @client/api/local.settings.properties.json
 ```
-ref: https://github.com/Azure/azure-cli/issues/20108
 
 ```bash
-az rest --method put --headers "Content-Type=application/json" --uri "/subscriptions/4e763e23-3cae-4f86-a6c7-b1db6decc68b/resourceGroups/rg-onsen/providers/Microsoft.Web/staticSites/stapp-onsen-client/config/functionappsettings?api-version=2021-02-01" --body @client/api/local.settings.properties.json
+az rest --method put --headers "Content-Type=application/json" --uri "<Static Web apps resource ID (admin)>/config/functionappsettings?api-version=2021-02-01" --body @admin/api/local.settings.properties.json
 ```
 
 ## 備考
