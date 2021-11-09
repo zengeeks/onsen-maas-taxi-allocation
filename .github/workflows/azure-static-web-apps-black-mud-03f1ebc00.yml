@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 14.x
       - name: Restore packages
-        run: npm install --production
+        run: npm install
       - name: Build
         run: npm run build
       - name: Build And Deploy
