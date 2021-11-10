@@ -1,16 +1,21 @@
 # 【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】
 
-このリポジトリは、[【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】](https://linedevelopercommunity.connpass.com/event/220376/) で行うハンズオンのサンプルコードとセルフペースドハンズオンの資料を含んでいます。
-
-## セルフペースドハンズオン
-
-セルフペースドハンズオンを実施される方は、 [docs/self-paced-handson](./docs/self-paced-handson) へお進みください。
-
-### ご質問、トラブルシューティングの受付
-
-ご質問やトラブルシューティングは、このリポジトリの [GitHub Discussions](https://github.com/zengeeks/onsen-maas-taxi-allocation/discussions) にて受け付けます。
+このリポジトリは、[【地方活性化！】MaaS Hands-On with Microsoft Azure【ミニアプリ】](https://linedevelopercommunity.connpass.com/event/220376/) で行ったハンズオンをベースに、より実用に即した改良を行ったサンプルコードを格納しています。
 
 ## サンプルコード
+
+### 主要スタック
+
+このサンプルコードでは主に以下のスタックを利用しています。
+
+- [Vue.js](https://v3.ja.vuejs.org/): フロントエンドのフレームワーク (Vue3.x)
+- [Vite](https://vitejs.dev/): フロントエンドアプリケーションのビルド
+- [TypeScript](https://www.typescriptlang.org/): プロジェクト全体のプログラミング言語として利用
+- [LIFF](https://developers.line.biz/ja/docs/liff/): LINE の ログインや Messaging API を利用
+- [Azure Functions](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-overview): バックエンド API 実行基盤
+- [Azure Cosmos DB](https://docs.microsoft.com/ja-jp/azure/cosmos-db/introduction): バックエンドのデータストア
+- [GitHub Codespaces](https://github.co.jp/features/codespaces): 開発環境
+- [GitHub Actions](https://github.co.jp/features/actions): CI/CD 実行環境
 
 ### ディレクトリ構成
 
@@ -18,9 +23,9 @@
 
 ```bash
 ├── .devcontainer       ... Dev container 構成
-├── .vscode             ... Visual Studio Code 用プロジェクト設定
 ├── client              ... ユーザークライアントのコード
 ├── admin               ... 管理システムのコード
 ├── docs                ... 資料などドキュメンテーション
+├── dev.code-workspace  ... Visual Studio Code のワークスペース設定ファイル
 └── README.md           ... このファイル
 ```

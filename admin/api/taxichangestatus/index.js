@@ -18,7 +18,11 @@ module.exports = async function (context, req) {
 
 		context.res = {
 			status: 200,
-			body: "Taxi reservation data is inserted to DB."
+			body: {
+				id: updatedReservation.id,
+				userId: updatedReservation.userId,
+				reservationStatus: updatedReservation.reservationStatus,
+			}
 		};
 	} catch (e) {
 		context.log('Error: ', e);
