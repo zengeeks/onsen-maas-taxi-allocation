@@ -2,14 +2,17 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "func",
-      "command": "host start",
+      "type": "shell",
+      "label": "npm run start:dev",
+      "command": "npm run start:dev",
       "problemMatcher": "$func-node-watch",
       "isBackground": true,
-      "dependsOn": "npm install (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/api"
-      }
+        "env": {
+          "languageWorkers__node__arguments": "--inspect=9230"
+        }
+      },
+      "dependsOn": "npm install (functions)"
     },
     {
       "type": "shell",

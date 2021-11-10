@@ -1,5 +1,10 @@
 {
+	"engines": {
+		"node": "~14",
+		"npm": "~7"
+	},
 	"dependencies": {
-		"@azure/cosmos": "^3.14.1"
+		"@azure/cosmos": "^3.14.1",
+		"node-fetch": "^2.6.5"
 	}
 }

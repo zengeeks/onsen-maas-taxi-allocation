@@ -8,7 +8,10 @@
     }
   ],
   "settings": {
-    "debug.internalConsoleOptions": "neverOpen"
+    "debug.internalConsoleOptions": "neverOpen",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+    }
   },
   "extensions": {
     "recommendations": [
@@ -23,7 +26,7 @@
         "name": "Attach to both apps",
         "configurations": [
           "Launch Vue app, API and SWA",
-          "Attach to admin functions"
+          "[admin] Launch Vue app, API with SWA"
         ]
       }
     ]

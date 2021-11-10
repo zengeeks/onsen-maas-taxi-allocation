@@ -1,0 +1,34 @@
+{
+  "name": "onsen-maas-taxi-allocation-admin",
+  "version": "0.1.0",
+  "engines": {
+    "node": "~14",
+    "npm": "~7"
+  },
+  "scripts": {
+    "start:dev": "swa start dev",
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview",
+    "lint": "eslint src/**/*.{ts,vue}",
+    "lint:fix": "eslint --fix src/**/*.{ts,vue}"
+  },
+  "dependencies": {
+    "axios": "^0.23.0",
+    "dayjs": "^1.10.7",
+    "vue": "^3.2.16"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^8.0.0",
+    "eslint": "^8.1.0",
+    "eslint-plugin-vue": "^7.20.0",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.3",
+    "vite": "^2.6.4",
+    "vue-tsc": "^0.3.0"
+  }
+}

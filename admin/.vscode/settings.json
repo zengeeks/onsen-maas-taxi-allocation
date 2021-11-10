@@ -3,5 +3,9 @@
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "JavaScript",
   "azureFunctions.projectRuntime": "~3",
-  "azureFunctions.preDeployTask": "npm prune (functions)"
+  "debug.internalConsoleOptions": "neverOpen",
+  "azureFunctions.preDeployTask": "npm prune (functions)",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
 }
