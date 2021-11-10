@@ -2,7 +2,7 @@
 
 ## 全体シーケンス
 
-![全体シーケンス](../docs/self-paced-handson/images/admin/sequences.png)
+![全体シーケンス](../docs/images/admin/sequences.png)
 
 ## サンプルコード
 
