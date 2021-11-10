@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'prettier',
   ],
+  ignorePatterns: ['src/env.d.ts'],
   parserOptions: {
     parser: '@typescript-eslint/parser',
   },
