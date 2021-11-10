@@ -50,7 +50,7 @@ module.exports = async function (context, req) {
 
     try {
         const response = await fetch(messageEndpoint, messageOptions);
-        data = await response.json();
+        const data = await response.json();
         if (!response.ok) {
             throw new Error(`LINE Message API Error: ${data.message}`);
         }
