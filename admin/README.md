@@ -12,12 +12,13 @@
 
 ```bash
 ├── .vscode             ... Visual Studio Code 用プロジェクト設定
-├── api                 ... Backend API (Azure Functions 対応) 
+├── api                 ... Backend API (Azure Functions 対応)
 ├── public              ... Vue.js プロジェクトの public ディレクトリ
 ├── src                 ... Vue.js プロジェクトの src ディレクトリ
 ├── README.md           ... このファイル
 └── ...                 ... 静的サイトのファイル一式
 ```
+
 ### 開発
 
 #### Project setup
