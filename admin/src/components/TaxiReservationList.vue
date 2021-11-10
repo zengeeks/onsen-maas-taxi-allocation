@@ -29,21 +29,12 @@ export default defineComponent({
       }
     }
 
-    // 継続的な情報の更新を行う
-    const refresh = () => {
-      setInterval(getTaxiReservationList, 10000)
-    }
+    getTaxiReservationList()
+    setInterval(getTaxiReservationList, 10000)
 
     return {
       taxiReservationResponseList,
-      getTaxiReservationList,
-      refresh,
     }
-  },
-
-  created: function () {
-    this.getTaxiReservationList()
-    this.refresh()
   },
 })
 </script>

@@ -124,6 +124,30 @@ export default defineComponent({
       await updateReservationStatus(reservationStatuses['canceled'])
     }
 
+    // 手配開始ボタンの無効化判定
+    const isDisabledStartAllocationButton = (): boolean => {
+      return (
+        !isStatusRequested(reservationStatusId.value) ||
+        isStatusCanceled(reservationStatusId.value)
+      )
+    }
+
+    // 手配完了ボタンの無効化判定
+    const isDisabledCompleteAllocationButton = (): boolean => {
+      return (
+        !isStatusAllocating(reservationStatusId.value) ||
+        isStatusCanceled(reservationStatusId.value)
+      )
+    }
+
+    // キャンセルボタンの無効判定
+    const isDisabledCancelButton = (): boolean => {
+      return (
+        isStatusAllocated(reservationStatusId.value) ||
+        isStatusCanceled(reservationStatusId.value)
+      )
+    }
+
     return {
       reservation,
       reservationStatusId,
@@ -131,33 +155,10 @@ export default defineComponent({
       startAllocation,
       completeAllocation,
       cancelAllocation,
+      isDisabledStartAllocationButton,
+      isDisabledCompleteAllocationButton,
+      isDisabledCancelButton,
     }
-  },
-
-  methods: {
-    // 手配開始ボタンの無効化判定
-    isDisabledStartAllocationButton(): boolean {
-      return (
-        !isStatusRequested(this.reservationStatusId) ||
-        isStatusCanceled(this.reservationStatusId)
-      )
-    },
-
-    // 手配完了ボタンの無効化判定
-    isDisabledCompleteAllocationButton(): boolean {
-      return (
-        !isStatusAllocating(this.reservationStatusId) ||
-        isStatusCanceled(this.reservationStatusId)
-      )
-    },
-
-    // キャンセルボタンの無効判定
-    isDisabledCancelButton(): boolean {
-      return (
-        isStatusAllocated(this.reservationStatusId) ||
-        isStatusCanceled(this.reservationStatusId)
-      )
-    },
   },
 })
 </script>
