@@ -6,9 +6,8 @@ module.exports = {
   extends: [
     'plugin:vue/vue3-recommended',
     'eslint:recommended',
-    '@vue/typescript/recommended',
-    '@vue/prettier',
-    '@vue/prettier/@typescript-eslint',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'prettier',
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
@@ -18,6 +17,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
   globals: {
-    defineProps: "readonly",
-  }
+    defineProps: 'readonly',
+  },
 }

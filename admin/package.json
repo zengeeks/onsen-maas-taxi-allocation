@@ -10,8 +10,7 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
-    "lint": "eslint src/**/*.{ts,vue}",
-    "lint:fix": "eslint --fix src/**/*.{ts,vue}"
+    "lint": "prettier --check . && eslint --ext \".ts,.js,.vue\" --ignore-path .gitignore ."
   },
   "dependencies": {
     "axios": "^0.23.0",
@@ -22,9 +21,10 @@
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "@vitejs/plugin-vue": "^1.9.3",
-    "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^8.0.0",
     "eslint": "^8.1.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.20.0",
     "prettier": "^2.4.1",
     "typescript": "^4.4.3",
