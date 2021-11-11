@@ -22,6 +22,7 @@
   ],
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+    "esbenp.prettier-vscode",
 		"dbaeumer.vscode-eslint",
     "ms-vscode.js-debug-nightly",
     "ms-azuretools.vscode-azurefunctions",

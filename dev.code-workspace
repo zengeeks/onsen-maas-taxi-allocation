@@ -15,6 +15,7 @@
   },
   "extensions": {
     "recommendations": [
+      "esbenp.prettier-vscode",
       "johnsoncodehk.volar",
       "ms-azuretools.vscode-azurefunctions"
     ]
