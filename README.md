@@ -4,6 +4,10 @@
 
 ## サンプルコード
 
+### アーキテクチャ
+
+![onsen-maas-architecture](https://user-images.githubusercontent.com/1104403/141406837-823c8e99-a936-43db-9a8c-7e141a1d848b.png)
+
 ### 主要スタック
 
 このサンプルコードでは主に以下のスタックを利用しています。
@@ -12,10 +16,11 @@
 - [Vite](https://vitejs.dev/): フロントエンドアプリケーションのビルド
 - [TypeScript](https://www.typescriptlang.org/): プロジェクト全体のプログラミング言語として利用
 - [LIFF](https://developers.line.biz/ja/docs/liff/): LINE の ログインや Messaging API を利用
-- [Azure Functions](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-overview): バックエンド API 実行基盤
+- [Azure Static Web Apps](https://docs.microsoft.com/ja-jp/azure/static-web-apps/overview): フロントエンドホスティング + バックエンド API 実行基盤
 - [Azure Cosmos DB](https://docs.microsoft.com/ja-jp/azure/cosmos-db/introduction): バックエンドのデータストア
 - [GitHub Codespaces](https://github.co.jp/features/codespaces): 開発環境
 - [GitHub Actions](https://github.co.jp/features/actions): CI/CD 実行環境
+- [Terraform](https://www.terraform.io/): Infrastructure as Code
 
 ### ディレクトリ構成
 
