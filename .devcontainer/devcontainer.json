@@ -28,18 +28,18 @@
     "ms-azuretools.vscode-azurefunctions",
     "johnsoncodehk.volar",
     "hashicorp.terraform"
-	],
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
     8080, // for Vue application
     9222, // for Debugging of Vue application
     4280, // for static-web-apps-cli
     7071 // for azure-functions-core-tools
   ],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash ./.devcontainer/scripts/postCreateCommand.sh",
-	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "node",
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "bash ./.devcontainer/scripts/postCreateCommand.sh",
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "node",
   "features": {
     "azure-cli": "latest",
     "terraform": "latest"
