@@ -6,7 +6,7 @@
 
 ### アーキテクチャ
 
-![onsen-maas-architecture](https://user-images.githubusercontent.com/1104403/141406837-823c8e99-a936-43db-9a8c-7e141a1d848b.png)
+![onsen-maas-architecture](docs/images/onsen-maas-architecture.png)
 
 ### 主要スタック
 
