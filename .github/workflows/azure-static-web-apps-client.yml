@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD
+name: Azure Static Web Apps CI/CD (client)
 
 on:
   push:
@@ -6,12 +6,14 @@ on:
       - main
     paths:
       - client/**
+      - .github/workflows/azure-static-web-apps-client.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
     paths:
       - client/**
+      - .github/workflows/azure-static-web-apps-client.yml
 
 jobs:
   build_and_deploy_job:
