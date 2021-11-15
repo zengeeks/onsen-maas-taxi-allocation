@@ -32,5 +32,6 @@
 ├── admin               ... 管理システムのコード
 ├── docs                ... 資料などドキュメンテーション
 ├── dev.code-workspace  ... Visual Studio Code のワークスペース設定ファイル
+├── iac                 ... Infrastructure as Code のためのコード
 └── README.md           ... このファイル
 ```
