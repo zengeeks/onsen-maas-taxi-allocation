@@ -27,7 +27,7 @@ Terraform を用いて、Microsoft Azure 上に本構成をデプロイします
 
 ### 環境準備
 
-この Terraform コードで Backend に Azure (Blob storage) を指定したい場合は、 `backend_override.tf.example` を参考に、`backend_override.tf` を配置すると、切替えが容易です。`*backend_override.tf` によるオーバーライドについては後述備考をご参考ください。
+この Terraform コードで Backend に Azure (Blob storage) を指定したい場合は、 `backend_override.tf.example` を参考に、`backend_override.tf` を配置すると、切替えが容易です。`*backend_override.tf` によるオーバーライドについては後述備考 [Terraform のオーバーライドの仕組み](#terraform-のオーバーライドの仕組み) をご参考ください。
 
 - Terraform ステート管理用の [Azure storage account](https://docs.microsoft.com/ja-jp/azure/storage/common/storage-account-overview) を作成し、`tfstate` の名前で Blob コンテナを作成する
 - `backend_override.tf.example` を `backend_override.tf` としてコピーし、 `resource_group_name` と `storage_account_name` の値を指定する
@@ -128,8 +128,30 @@ az rest --method put --headers "Content-Type=application/json" --uri "<Static We
 az rest --method put --headers "Content-Type=application/json" --uri "<Static Web app resource ID (admin)>/config/functionappsettings?api-version=2021-02-01" --body @admin/api/local.settings.properties.json
 ```
 
+#### 補足
+
+- [API による Azure Static Web app のアプリケーション設定について](#api-による-azure-static-web-app-のアプリケーション設定について)
+
 ## 備考
 
 ### Terraform のオーバーライドの仕組み
 
 Terraform では、`override.tf` または `_override.tf` ファイルを配置すると設定をオーバーライドできます。詳しくはこちら [Override Files - Configuration Language - Terraform by HashiCorp](https://www.terraform.io/docs/language/files/override.html) をご参考ください。
+
+### API による Azure Static Web app のアプリケーション設定について
+
+上記のコマンドで実行しているAPI は、Environment が Production のアプリケーション設定を変更します。
+
+- [Static Sites - Create Or Update Static Site Function App Settings](https://docs.microsoft.com/en-us/rest/api/appservice/static-sites/create-or-update-static-site-function-app-settings)
+
+```
+PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/config/functionappsettings?api-version=2021-02-01
+```
+
+もし、別の Environment のアプリケーション設定を更新したい場合は、下記を参考に API を差し替えて利用してください。
+
+- [Static Sites - Create Or Update Static Site Build Function App Settings](https://docs.microsoft.com/en-us/rest/api/appservice/static-sites/create-or-update-static-site-build-function-app-settings)
+
+```
+PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{environmentName}/config/functionappsettings?api-version=2021-02-01
+```
