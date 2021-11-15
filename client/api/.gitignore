@@ -21,6 +21,7 @@ project.lock.json
 .secrets
 appsettings.json
 local.settings.json
+local.settings.properties.json
 
 node_modules
 dist
@@ -41,5 +42,3 @@ venv.bak/
 __pycache__/
 *.py[cod]
 *$py.class
-
-local.settings.properties.json
