@@ -1,3 +1,3 @@
-output "stapp_name" {
-  value = azurerm_static_site.client.name
+output "stapp_id" {
+  value = azurerm_static_site.client.id
 }

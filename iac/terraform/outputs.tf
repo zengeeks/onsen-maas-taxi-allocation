@@ -7,8 +7,8 @@ output "cosmosdb_connection_string" {
   sensitive = true
 }
 
-output "stapp_name_client" {
-  value = module.client.stapp_name
+output "stapp_id_client" {
+  value = module.client.stapp_id
 }
 
 output "cosmosdb_endpoint" {
@@ -28,6 +28,6 @@ output "cosmosdb_container_name" {
   value = module.shared.cosmosdb_container_name
 }
 
-output "stapp_name_admin" {
-  value = module.admin.stapp_name
+output "stapp_id_admin" {
+  value = module.admin.stapp_id
 }
