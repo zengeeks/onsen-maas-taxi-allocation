@@ -7,6 +7,22 @@ Terraform を用いて、Microsoft Azure 上に本構成をデプロイします
 - [Teraform](https://www.terraform.io/downloads.html)
 - [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli)
 
+## LINE チャンネルの準備
+
+まず、LINE Developersコンソールで２つのチャンネル（ログイン、Messaging API）を作成する必要があります。下記を参考に作成してください。
+
+- [LIFFアプリに利用するチャネルを作成する](../../docs/create-line-channels.md)
+
+なお、作成したそれぞれのチャネルの下記の情報が必要になるので、控えておいてください。
+
+| チャネル | 項目 | 説明 |
+|----|----|----|
+| LINEログイン | チャネルID | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルID」 |
+| LINEログイン | LIFF ID | 「LIFF」タブ > 作成したLIFFアプリ > 「LIFF ID」 |
+| LINEログイン | LIFF URL | 「LIFF」タブ > 作成したLIFFアプリ > 「LIFF URL」 |
+| Messaging API | チャネルID | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルID」 |
+| Messaging API | チャネルシークレット | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルシークレット」 |
+
 ## Terraform によるリソース配置
 
 ### 環境準備
@@ -53,10 +69,14 @@ terraform output -json | jq "map_values(.value)"
   "cosmosdb_endpoint": "https://<Cosmos DB's name>.documents.azure.com",
   "cosmosdb_key": "<Cosmos DB's primary key>",
   "resource_group_name": "<Resource group name>",
-  "stapp_id_admin": "<Static Web apps resource ID (admin)>",
-  "stapp_id_client": "<Static Web apps resource ID (client)>"
+  "stapp_api_key_admin": "<Static Web app API key (admin)>",
+  "stapp_api_key_client": "<Static Web app API key (client)>",
+  "stapp_id_admin": "<Static Web app resource ID (admin)>",
+  "stapp_id_client": "<Static Web app resource ID (client)>",
 }
 ```
+
+※ [jq](https://stedolan.github.io/jq/) コマンドは適宜ご用意ください。
 
 ## GitHub Actions のワークフローの整備
 
@@ -64,36 +84,48 @@ terraform output -json | jq "map_values(.value)"
 
 | シークレット名 | 値（説明） |
 |----|----|
-| `AZURE_STATIC_WEB_APPS_API_TOKEN_BLACK_MUD_03F1EBC00` | デプロイ先の Static Web App の Deployment token を指定する |
-| `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_CLIENT` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_client` で取得可能） |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_admin` で取得可能） |
+| LINE_LIFFID | LINEログインチャネルの LIFF ID を指定する |
 
 ## Azure CLI によるアプリケーション設定の更新
 
-（まとめ中）
-
-| チャネル | 項目 | 説明 |
-|----|----|----|
-| LINEログイン | チャネルID | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルID」 |
-| LINEログイン | LIFF ID | 「LIFF」タブ > 作成したLIFFアプリ > 「LIFF ID」 |
-| LINEログイン | LIFF URL | 「LIFF」タブ > 作成したLIFFアプリ > 「LIFF URL」 |
-| Messaging API | チャネルID | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルID」 |
-| Messaging API | チャネルシークレット | 「チャネル基本設定」タブ > 「基本設定」 > 「チャネルシークレット」 |
-
-```
-LINE_LOGIN_LIFFID="<LINE Login LIFF ID>"
-LINE_LOGIN_CHANNEL_ID="<LINE Login Channel ID>"
-LINE_MESSAGING_API_CHANNEL_ID="<LINE Messaging Channel ID>"
-LINE_MESSAGING_API_CHANNEL_SECRET="<LINE Messaging Channel secret>"
-```
-
 Azure Static Web App の app settings を反映します。
 
-```bash
-az rest --method put --headers "Content-Type=application/json" --uri "<Static Web apps resource ID (client)>/config/functionappsettings?api-version=2021-02-01" --body @client/api/local.settings.properties.json
+それぞれ、下記の形式で JSON ファイルを作成し、下段のコマンドで反映します。コマンドでは、`--uri` オプションの値を適宜置き換えてください。
+
+`client/api/local.settings.properties.json`
+```json
+{
+  "properties": {
+    "LINE_LOGIN_CHANNEL_ID": "<LINE ログイン チャネルの ID>",
+    "LINE_MESSAGING_API_CHANNEL_ID": "<LINE Message API チャネルの ID>",
+    "LINE_MESSAGING_API_CHANNEL_SECRET": "<LINE Message API チャネルのシークレット>",
+    "COSMOS_CONNECTION": "<Cosmos DB's connection string>"
+  }
+}
 ```
 
 ```bash
-az rest --method put --headers "Content-Type=application/json" --uri "<Static Web apps resource ID (admin)>/config/functionappsettings?api-version=2021-02-01" --body @admin/api/local.settings.properties.json
+az rest --method put --headers "Content-Type=application/json" --uri "<Static Web app resource ID (client)>/config/functionappsettings?api-version=2021-02-01" --body @client/api/local.settings.properties.json
+```
+
+`admin/api/local.settings.properties.json`
+```json
+{
+  "Properties": {
+    "LINE_MESSAGING_API_CHANNEL_ID": "<LINE Message API チャネルの ID>",
+    "LINE_MESSAGING_API_CHANNEL_SECRET": "<LINE Message API チャネルのシークレット>",
+    "COSMOSDB_ENDPOINT": "https://<Cosmos DB's name>.documents.azure.com",
+    "COSMOSDB_KEY": "<Cosmos DB's primary key>",
+    "COSMOSDB_DATABASE": "TaxiReserveDb",
+    "COSMOSDB_CONTAINER": "TaxiReserveCol"
+  }
+}
+```
+
+```bash
+az rest --method put --headers "Content-Type=application/json" --uri "<Static Web app resource ID (admin)>/config/functionappsettings?api-version=2021-02-01" --body @admin/api/local.settings.properties.json
 ```
 
 ## 備考
