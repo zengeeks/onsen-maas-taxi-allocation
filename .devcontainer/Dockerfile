@@ -17,4 +17,4 @@ RUN npm install --unsafe-perm true -g \
 
 RUN npm install --unsafe-perm true -g \
   azure-functions-core-tools@3 \
-  @azure/static-web-apps-cli@0.8.0
+  @azure/static-web-apps-cli@0.8.2
