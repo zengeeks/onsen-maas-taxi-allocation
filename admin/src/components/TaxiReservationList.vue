@@ -16,8 +16,8 @@ export default defineComponent({
     // タクシー予約一覧を取得する
     const getTaxiReservationList = async () => {
       const now = new Date()
-      const fromDate = now.toISOString()
-      const toDate = dayjs(now).hour(23).minute(59).second(59).toISOString()
+      const fromDate = dayjs(now).startOf('day').toISOString()
+      const toDate = dayjs(now).endOf('day').toISOString()
 
       const response: AxiosResponse<TaxiReservationResponse[]> =
         await axios.get('/api/taxireservelist', {
