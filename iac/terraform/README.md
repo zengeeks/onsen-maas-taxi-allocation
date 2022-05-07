@@ -86,7 +86,7 @@ terraform output -json | jq "map_values(.value)"
 |----|----|
 | `AZURE_STATIC_WEB_APPS_API_TOKEN_CLIENT` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_client` で取得可能） |
 | `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_admin` で取得可能） |
-| LINE_LIFFID | LINEログインチャネルの LIFF ID を指定する |
+| `LINE_LIFFID` | LINEログインチャネルの LIFF ID を指定する |
 
 ## Azure CLI によるアプリケーション設定の更新
 
