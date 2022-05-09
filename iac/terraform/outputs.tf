@@ -11,6 +11,10 @@ output "stapp_api_key_client" {
   sensitive = true
 }
 
+output "stapp_default_host_name_client" {
+  value = module.client.stapp_default_host_name
+}
+
 output "stapp_id_admin" {
   value = module.admin.stapp_id
 }
