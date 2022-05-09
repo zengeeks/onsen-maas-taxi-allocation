@@ -2,14 +2,19 @@
 
 ここでは主に、Microsoft Azure 上で本サンプルコードを実行するための Azure リソースの作成について記載します。
 
-また Azure Static Web app へのコードのデプロイは、GitHub Actions を用いて構成しています。
+ユーザークライアント及び管理システムは Azure Static Web app で構成されており、コードのデプロイは GitHub Actions を用いて構成しています。
 
-ここでは下記のツールを利用します。本リポジトリの [development container](../.devcontainer/) の環境にはインストール済みです。
+## 事前準備
+
+### ツールの準備
+
+ここでは下記のツールを利用します。
 
 - [Teraform](https://www.terraform.io/downloads.html)
 - [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli)
+- [jq](https://stedolan.github.io/jq/)
 
-## 事前準備
+本リポジトリの [development container](../.devcontainer/) の環境を利用される場合は、インストール済みです。
 
 ### GitHub リポジトリの準備
 
