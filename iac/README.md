@@ -1,15 +1,23 @@
 # Micorosft Azure 上に本構成をデプロイする
 
-Terraform を用いて、Microsoft Azure 上に本構成をデプロイします。
+ここでは主に、Microsoft Azure 上で本サンプルコードを実行するための Azure リソースの作成について記載します。
 
-ここでは下記のツールを利用します。
+また Azure Static Web app へのコードのデプロイは、GitHub Actions を用いて構成しています。
+
+ここでは下記のツールを利用します。本リポジトリの [development container](../.devcontainer/) の環境にはインストール済みです。
 
 - [Teraform](https://www.terraform.io/downloads.html)
 - [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli)
 
-## LINE チャンネルの準備
+## 事前準備
 
-まず、LINE Developersコンソールで２つのチャンネル（ログイン、Messaging API）を作成する必要があります。下記を参考に作成してください。
+### GitHub リポジトリの準備
+
+本リポジトリを適宜フォークし、GitHub Actions を実行できるようにご準備ください。
+
+### LINE チャンネルの準備
+
+LINE Developersコンソールで２つのチャンネル（ログイン、Messaging API）を作成する必要があります。下記を参考に作成してください。
 
 - [LIFFアプリに利用するチャネルを作成する](../../docs/create-line-channels.md)
 
@@ -71,6 +79,7 @@ terraform output -json | jq "map_values(.value)"
   "resource_group_name": "<Resource group name>",
   "stapp_api_key_admin": "<Static Web app API key (admin)>",
   "stapp_api_key_client": "<Static Web app API key (client)>",
+  "stapp_default_host_name_client": "<Static Web app default host name (client)",
   "stapp_id_admin": "<Static Web app resource ID (admin)>",
   "stapp_id_client": "<Static Web app resource ID (client)>",
 }
@@ -78,15 +87,13 @@ terraform output -json | jq "map_values(.value)"
 
 ※ [jq](https://stedolan.github.io/jq/) コマンドは適宜ご用意ください。
 
-## GitHub Actions のワークフローの整備
+## LINEログインチャネルの LIFF のエンドポイントを更新する
 
-ワークフローファイルは既にリポジトリに格納しているので、下記のシークレットを環境に合わせて設定しておきます。
+上記で表示したリソースの情報のうち、 `stapp_default_host_name_client` の値がクライアントの Static Web app のホスト名（例: `
+<allocated identifier>.1.azurestaticapps.net` ）です。
 
-| シークレット名 | 値（説明） |
-|----|----|
-| `AZURE_STATIC_WEB_APPS_API_TOKEN_CLIENT` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_client` で取得可能） |
-| `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_admin` で取得可能） |
-| `LINE_LIFFID` | LINEログインチャネルの LIFF ID を指定する |
+これを LIFF のエンドポイントとして設定します。LINE Developersコンソールから、LINEログインチャネルの LIFF の「Endpoint URL」に `
+https://<allocated identifier>.1.azurestaticapps.net` の形式で指定します。
 
 ## Azure CLI によるアプリケーション設定の更新
 
@@ -127,6 +134,20 @@ az rest --method put --headers "Content-Type=application/json" --uri "<Static We
 ```bash
 az rest --method put --headers "Content-Type=application/json" --uri "<Static Web app resource ID (admin)>/config/functionappsettings?api-version=2021-02-01" --body @admin/api/local.settings.properties.json
 ```
+
+## GitHub Actions のワークフローの整備
+
+ワークフローファイルは既にリポジトリに格納しているので、下記のシークレットを環境に合わせて設定しておきます。
+
+| シークレット名 | 値（説明） |
+|----|----|
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_CLIENT` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_client` で取得可能） |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN_ADMIN` | デプロイ先の Static Web App の Deployment token を指定する（前述の Terraform のアウトプットの `stapp_api_key_admin` で取得可能） |
+| `LINE_LIFFID` | LINEログインチャネルの LIFF ID を指定する |
+
+## GitHub Actions のワークフローを実行
+
+ユーザークライアントおよび管理システムの GitHub Actions ワークフローは、`workflow_dispatch` による実行も可能です。初回のコードのデプロイなど、必要に応じて実行してください。
 
 #### 補足
 

@@ -24,7 +24,7 @@
 
 ### ディレクトリ構成
 
-以下のような構成で、Vue.js によるサンプルコードや、ドキュメントを格納しています。
+子のリポジトリには、以下のような構成で、Vue.js によるサンプルコードや、ドキュメントが格納されています。
 
 ```bash
 ├── .devcontainer       ... Dev container 構成
@@ -35,3 +35,21 @@
 ├── iac                 ... Infrastructure as Code のためのコード
 └── README.md           ... このファイル
 ```
+
+### サンプルコードの実行
+
+#### LINE チャンネルの準備
+
+LINEの仕組みを利用するため、LINE Developersコンソールで２つのチャンネル（ログイン、Messaging API）を作成する必要があります。下記を参照ください。
+
+- [LIFFアプリに利用するチャネルを作成する](./docs/create-line-channels.md)
+
+#### ローカル環境での実行
+
+ユーザークライアント及び管理システムをローカル環境で動作させるには、[client](./client/) 及び [admin](./admin/) を参照ください。
+
+本リポジトリでは、 [development container](./.devcontainer/) も用意しているので、VS Code や GitHub Codespaces にて適宜ご利用ください。
+
+#### Microsoft Azure 上での実行
+
+サンプルコードを実行するためのインフラリソースの構築については、[iac](./iac/) を参照ください。

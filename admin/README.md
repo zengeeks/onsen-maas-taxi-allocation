@@ -19,7 +19,18 @@
 └── ...                 ... 静的サイトのファイル一式
 ```
 
-### 開発
+## サンプルコードをローカル環境で実行する
+
+### Backend API (Azure Functions 対応) のセットアップ
+
+`api/local.settings.example.json` をもとに `api/local.settings.json` を作成し、JSON のそれぞれの値を設定してください。
+
+- `LINE_MESSAGING_API_CHANNEL_ID`
+- `LINE_MESSAGING_API_CHANNEL_SECRET`
+- `COSMOSDB_ENDPOINT`
+- `COSMOSDB_KEY`
+
+各値の詳細は [/iac/terraform/README.md](../iac/terraform/README.md) をご参考ください。
 
 #### Project setup
 
