@@ -21,6 +21,7 @@ project.lock.json
 .secrets
 appsettings.json
 local.settings.json
+local.settings.properties.json
 
 node_modules
 dist

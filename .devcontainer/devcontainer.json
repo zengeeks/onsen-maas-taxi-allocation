@@ -26,7 +26,8 @@
     "dbaeumer.vscode-eslint",
     "ms-vscode.js-debug-nightly",
     "ms-azuretools.vscode-azurefunctions",
-    "johnsoncodehk.volar"
+    "johnsoncodehk.volar",
+    "hashicorp.terraform"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
@@ -38,5 +39,9 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "bash ./.devcontainer/scripts/postCreateCommand.sh",
   // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "node"
+  "remoteUser": "node",
+  "features": {
+    "azure-cli": "latest",
+    "terraform": "latest"
+  }
 }

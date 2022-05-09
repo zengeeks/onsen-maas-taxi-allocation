@@ -17,11 +17,22 @@
 └── ...                 ... Vue.js プロジェクトのファイル一式
 ```
 
-### Vue.js プロジェクト
+## サンプルコードをローカル環境で実行する
 
-Vue.js プロジェクトに関する補足は下記をご参考ください。
+### Backend API (Azure Functions 対応) のセットアップ
 
-#### Project setup
+Backend API に引き渡す環境変数を設定します。`api/local.settings.example.json` をもとに `api/local.settings.json` を作成し、JSON のそれぞれの値を設定してください。
+
+- `LINE_LOGIN_CHANNEL_ID`
+- `LINE_MESSAGING_API_CHANNEL_ID`
+- `LINE_MESSAGING_API_CHANNEL_SECRET`
+- `COSMOS_CONNECTION`
+
+各値の詳細は [/iac/terraform/README.md](../iac/terraform/README.md) をご参考ください。
+
+### プロジェクトのセットアップ
+
+初回は、下記を参考に、このディレクトリと `api` ディレクトリでパッケージのインストールを行ってください。
 
 ```
 npm install
@@ -31,22 +42,41 @@ npm run build
 popd
 ```
 
-#### Compiles and hot-reloads for Vite development
+### Vite のみを実行する
+
+Vite のみを実行する場合は、下記コマンドを実行します。なお、Backend API は動作しません。API を動作させたい場合は下記を参考ください。
 
 ```
 npm run dev
 ```
 
-#### Start running Static Web App locally with vite environment
+### Backend API を含めた Static Web app に基づく開発環境を実行する
+
+ローカル環境にて Backend API を含めた Static Web app に基づく開発環境を実行するには、下記コマンドを実行します。
 
 ```
 npm run start
 ```
 
-#### Compiles and minifies for production
+`http://127.0.0.1:4280` で立ち上がります。
+
+### LINE ログインチャネルの LIFF のエンドポイントを更新する
+
+ユーザークライアントは、LIFF で動作するため、初回に LINE ログインを求めるように構成されています。ログイン後にコールバックを受けてクライアントに遷移できるよう、LINE ログインチャネルの LIFF のエンドポイントを、`http://127.0.0.1:4280` に向ける必要があります。
+
+LINE Developers コンソールから、LINE ログインチャネルの LIFF の「Endpoint URL」に指定してください。
+
+なお、_https_ で指定する必要があるので、下記を参考に適宜ご対応ください。
+
+- GitHub Codespaces を利用している場合は、ポート 4280 の Port visibility を Public に変更し、その URL を利用する
+- [ngrok](https://ngrok.com/) などのツールを用いて、 _https_ の形式でトンネルを設けてその URL を利用する
+
+### ビルド
+
+本番用のビルドは、下記コマンドを実行します。
 
 ```
 npm run build
 ```
 
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+詳細は [vue-loader](http://vuejs.github.io/vue-loader) のドキュメントを参照ください。

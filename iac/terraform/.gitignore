@@ -1,0 +1,4 @@
+.terraform
+.auto.tfvars*
+*override.tf
+terraform.tfstate*

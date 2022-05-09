@@ -1,0 +1,5 @@
+.git
+.terraform
+.auto.tfvars*
+backend.hcl*
+*override.tf*

@@ -19,9 +19,22 @@
 └── ...                 ... 静的サイトのファイル一式
 ```
 
-### 開発
+## サンプルコードをローカル環境で実行する
 
-#### Project setup
+### Backend API (Azure Functions 対応) のセットアップ
+
+Backend API に引き渡す環境変数を設定します。`api/local.settings.example.json` をもとに `api/local.settings.json` を作成し、JSON のそれぞれの値を設定してください。
+
+- `LINE_MESSAGING_API_CHANNEL_ID`
+- `LINE_MESSAGING_API_CHANNEL_SECRET`
+- `COSMOSDB_ENDPOINT`
+- `COSMOSDB_KEY`
+
+各値の詳細は [/iac/terraform/README.md](../iac/terraform/README.md) をご参考ください。
+
+### プロジェクトのセットアップ
+
+初回は、下記を参考に、このディレクトリと `api` ディレクトリでパッケージのインストールを行ってください。
 
 ```
 npm install
@@ -30,7 +43,7 @@ npm install
 popd
 ```
 
-### 実行
+### Backend API を含めた Static Web app に基づく開発環境を実行する
 
 下記コマンドで、ローカル環境にて Backend API を含めた開発環境を実行できます。（ `swa-cli.config.json` から設定を読み込んで実行します。）
 
@@ -38,18 +51,4 @@ popd
 swa start
 ```
 
-タクシー予約一覧は `http://127.0.0.1:4281/` からアクセスします。
-
-### Vite's README
-
-#### Vue 3 + Typescript + Vite
-
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-##### Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
-
-##### Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+タクシー予約一覧は `http://127.0.0.1:4281/` で立ち上がります。
