@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD (client)
+name: [client] Azure Static Web Apps CI/CD
 
 on:
   push:
@@ -14,10 +14,11 @@ on:
     paths:
       - client/**
       - .github/workflows/azure-static-web-apps-client.yml
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     defaults:
