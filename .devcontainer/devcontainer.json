@@ -6,7 +6,7 @@
     "dockerfile": "Dockerfile",
     // Update 'VARIANT' to pick a Node version: 12, 14, 16
     "args": { 
-      "VARIANT": "14-bullseye"
+      "VARIANT": "16-buster"
     }
   },
   // Set *default* container specific settings.json values on container create.
@@ -42,6 +42,7 @@
   "remoteUser": "node",
   "features": {
     "azure-cli": "latest",
-    "terraform": "latest"
+	"terraform": "latest",
+	"git": "latest"
   }
 }
