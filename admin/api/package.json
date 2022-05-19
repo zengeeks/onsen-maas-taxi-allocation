@@ -1,7 +1,7 @@
 {
 	"engines": {
-		"node": "~14",
-		"npm": "~7"
+		"node": "~16",
+		"npm": ">=7"
 	},
 	"dependencies": {
 		"@azure/cosmos": "^3.14.1",

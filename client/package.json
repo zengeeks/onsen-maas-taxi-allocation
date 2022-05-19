@@ -5,8 +5,8 @@
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": "~14",
-    "npm": "~7"
+    "node": "~16",
+    "npm": ">=7"
   },
   "scripts": {
     "start": "swa start http://localhost:3000 --run \"npm run dev\" --api-location api --devserver-timeout 120000",
