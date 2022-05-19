@@ -1,8 +1,15 @@
 {
+  "name": "onsen-maas-admin-api",
+  "description": "Onsen Maas reference admin's api by Azure Functions",
+  "version": "1.2.0",
 	"engines": {
 		"node": ">=14",
 		"npm": ">=7"
 	},
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
 	"dependencies": {
 		"@azure/cosmos": "^3.14.1",
 		"node-fetch": "^2.6.5"
