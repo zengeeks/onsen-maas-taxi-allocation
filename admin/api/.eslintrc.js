@@ -14,8 +14,9 @@ module.exports = {
         sourceType: 'module',
       },
       files: ['**/*.ts'],
-      plugins: ['@typescript-eslint/eslint-plugin'],
+      plugins: ['@typescript-eslint'],
       extends: [
+        'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
       ],
