@@ -2,8 +2,8 @@
   "name": "onsen-maas-taxi-allocation-admin",
   "version": "0.1.0",
   "engines": {
-    "node": "~14",
-    "npm": "~7"
+    "node": "~16",
+    "npm": ">=7"
   },
   "scripts": {
     "start:dev": "swa start dev",

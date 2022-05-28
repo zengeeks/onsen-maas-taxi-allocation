@@ -1,10 +1,10 @@
 {
-  "name": "onsen-maas-api",
-  "description": "Onsen Maas reference api by Azure Functions",
+  "name": "onsen-maas-client-api",
+  "description": "Onsen Maas reference client's api by Azure Functions",
   "version": "1.2.0",
   "engines": {
-    "node": "~14",
-    "npm": "~7"
+    "node": "~16",
+    "npm": ">=7"
   },
   "scripts": {
     "build": "tsc",
