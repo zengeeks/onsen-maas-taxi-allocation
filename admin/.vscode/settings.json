@@ -6,5 +6,11 @@
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.preDeployTask": "npm prune (functions)",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["**/swa-cli.config.json"],
+      "url": "https://aka.ms/azure/static-web-apps-cli/schema"
+    }
+  ]
 }
