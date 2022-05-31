@@ -48,7 +48,7 @@ LINEの仕組みを利用するため、LINE Developersコンソールで２つ�
 
 ユーザークライアント及び管理システムをローカル環境で動作させるには、[client](./client/) 及び [admin](./admin/) を参照ください。
 
-本リポジトリでは、 [development container](./.devcontainer/) も用意しているので、VS Code や GitHub Codespaces にて適宜ご利用ください。
+また、本リポジトリでは、 [development container](https://code.visualstudio.com/docs/remote/containers) の設定も用意しているので、VS Code や GitHub Codespaces にて適宜ご利用ください。詳細は [.devcontainer](./.devcontainer/) を参照ください。
 
 #### Microsoft Azure 上での実行
 
