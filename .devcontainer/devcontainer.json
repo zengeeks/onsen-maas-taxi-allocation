@@ -22,12 +22,13 @@
   ],
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "hashicorp.terraform",
+    "ms-vscode.azure-account",
     "ms-vscode.js-debug-nightly",
     "ms-azuretools.vscode-azurefunctions",
-    "johnsoncodehk.volar",
-    "hashicorp.terraform"
+    "Vue.volar"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [
@@ -42,7 +43,7 @@
   "remoteUser": "node",
   "features": {
     "azure-cli": "latest",
-	"terraform": "latest",
-	"git": "latest"
+    "terraform": "latest",
+    "git": "latest"
   }
 }

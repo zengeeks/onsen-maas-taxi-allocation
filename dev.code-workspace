@@ -15,9 +15,11 @@
   },
   "extensions": {
     "recommendations": [
+      "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
-      "johnsoncodehk.volar",
-      "ms-azuretools.vscode-azurefunctions"
+      "ms-vscode.azure-account",
+      "ms-azuretools.vscode-azurefunctions",
+      "Vue.volar"
     ]
   },
   "launch": {
