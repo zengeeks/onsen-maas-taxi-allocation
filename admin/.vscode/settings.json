@@ -1,10 +1,16 @@
 {
   "azureFunctions.deploySubpath": "api",
   "azureFunctions.postDeployTask": "npm install (functions)",
-  "azureFunctions.projectLanguage": "JavaScript",
-  "azureFunctions.projectRuntime": "~3",
+  "azureFunctions.projectLanguage": "TypeScript",
+  "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.preDeployTask": "npm prune (functions)",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "json.schemas": [
+    {
+      "fileMatch": ["**/swa-cli.config.json"],
+      "url": "https://aka.ms/azure/static-web-apps-cli/schema"
+    }
+  ]
 }

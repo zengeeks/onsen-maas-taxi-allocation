@@ -5,9 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "post"
-      ],
+      "methods": ["post"],
       "route": "sendmessage"
     },
     {
@@ -15,5 +13,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "scriptFile": "../dist/sendmessage/index.js"
 }

@@ -5,9 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "get"
-      ],
+      "methods": ["get"],
       "route": "taxireservelist"
     },
     {
@@ -15,5 +13,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "scriptFile": "../dist/taxireservelist/index.js"
 }

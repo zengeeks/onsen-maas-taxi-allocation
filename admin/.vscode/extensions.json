@@ -1,8 +1,8 @@
 {
   "recommendations": [
     "esbenp.prettier-vscode",
-    "johnsoncodehk.volar",
     "humao.rest-client",
-    "ms-azuretools.vscode-azurefunctions"
+    "ms-azuretools.vscode-azurefunctions",
+    "Vue.volar"
   ]
 }

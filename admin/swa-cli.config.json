@@ -1,12 +1,15 @@
 {
-  "$schema": "https://raw.githubusercontent.com/Azure/static-web-apps-cli/main/schema/swa-cli.config.schema.json",
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
     "dev": {
-      "context": "http://localhost:3001",
-      "run": "npm run dev",
+      "appDevserverUrl": "http://localhost:3001",
       "apiLocation": "api",
+      "run": "npm run dev",
       "apiPort": 7072,
       "port": 4281,
+      "outputLocation": "dist",
+      "appBuildCommand": "npm run build",
+      "apiBuildCommand": "npm run build --if-present",
       "devserverTimeout": 120000
     }
   }

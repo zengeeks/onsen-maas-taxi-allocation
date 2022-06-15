@@ -12,7 +12,7 @@
           "languageWorkers__node__arguments": "--inspect=9230"
         }
       },
-      "dependsOn": "npm install (functions)"
+      "dependsOn": "npm build (functions)"
     },
     {
       "type": "shell",
@@ -24,8 +24,19 @@
     },
     {
       "type": "shell",
+      "label": "npm build (functions)",
+      "command": "npm run build",
+      "dependsOn": "npm install (functions)",
+      "problemMatcher": "$tsc",
+      "options": {
+        "cwd": "${workspaceFolder}/api"
+      }
+    },
+    {
+      "type": "shell",
       "label": "npm prune (functions)",
       "command": "npm prune --production",
+      "dependsOn": "npm build (functions)",
       "problemMatcher": [],
       "options": {
         "cwd": "${workspaceFolder}/api"
